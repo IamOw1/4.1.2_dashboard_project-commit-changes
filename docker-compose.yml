@@ -1,0 +1,84 @@
+# ============================================================================
+# COBA AI Drone Agent v4.0 - Docker Compose
+# Запуск: docker-compose up --build
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # Основной сервис агента
+  drone-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coba-drone-agent
+    restart: unless-stopped
+    ports:
+      - "8000:8000"    # REST API
+      - "8501:8501"    # Streamlit Dashboard
+      - "8765:8765"    # WebSocket
+      - "9000-9100:9000-9100"  # Mesh Network
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./backup:/app/backup
+      - ./config:/app/config:ro
+    environment:
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DEEPSEEK_API_BASE=${DEEPSEEK_API_BASE:-https://api.deepseek.com/v1}
+      - DEEPSEEK_MODEL=${DEEPSEEK_MODEL:-deepseek-chat}
+      - COBA_API_KEY=${COBA_API_KEY:-coba-default-key}
+      - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD:-admin}
+      - DRONE_CONNECTION_STRING=${DRONE_CONNECTION_STRING:-udp:127.0.0.1:14550}
+      - PYTHONPATH=/app
+      - COBA_ENV=docker
+    networks:
+      - drone-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Сервис для GUI (опционально, запускается отдельно)
+  gui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coba-drone-gui
+    restart: unless-stopped
+    # В контейнере можно запускать GUI как отдельный процесс.
+    # Примечание: PyQt требует доступ к графической подсистеме, поэтому
+    # для headless окружений это может не работать без дополнительных настроек.
+    command: ["python", "main.py", "gui"]
+    ports:
+      - "8080:8080"
+    environment:
+      - API_URL=http://drone-agent:8000
+      - WEBSOCKET_URL=ws://drone-agent:8765
+    networks:
+      - drone-network
+    profiles:
+      - gui
+
+  # Redis для кэширования (опционально)
+  redis:
+    image: redis:7-alpine
+    container_name: coba-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - drone-network
+    profiles:
+      - with-redis
+
+volumes:
+  redis-data:
+
+networks:
+  drone-network:
+    driver: bridge

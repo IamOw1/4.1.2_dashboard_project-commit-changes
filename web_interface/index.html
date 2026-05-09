@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COBA AI Drone System - Панель Управления</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary: #7b2cbf;
+            --success: #00ff88;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+            --dark-bg: #0f1419;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar-custom {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(15, 20, 25, 0.8));
+            border-bottom: 2px solid var(--primary);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .status-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .status-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .status-card h3 {
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .status-online { color: var(--success); }
+        .status-offline { color: var(--danger); }
+        .status-warning { color: var(--warning); }
+
+        /* MAIN CONTENT */
+        .dashboard-container {
+            padding: 30px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+
+        .panel:hover {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .panel h2 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        /* BUTTONS */
+        .btn-primary-custom {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(45deg, var(--success), #00cc66);
+            border: none;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-success-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+            color: #000;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(45deg, var(--danger), #ff6666);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-danger-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 68, 68, 0.3);
+        }
+
+        .btn-group-custom {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        /* TELEMETRY ITEMS */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .telemetry-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .telemetry-item:hover {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .telemetry-item .label {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .telemetry-item .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* MAP VISUALIZATION */
+        .mission-map {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 20, 40, 0.3));
+            border-radius: 12px;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .drone-icon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 30px var(--primary);
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .home-base {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 136, 0.15);
+            border: 2px solid var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        /* INPUT FORMS */
+        .input-group-custom {
+            margin: 15px 0;
+        }
+
+        .input-group-custom label {
+            display: block;
+            color: #888;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group-custom input,
+        .input-group-custom select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .input-group-custom input:focus,
+        .input-group-custom select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        /* SCENARIOS */
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .scenario-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .scenario-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .scenario-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .scenario-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .scenario-card p {
+            color: #888;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* TOOLS STATUS */
+        .tool-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid rgba(0, 212, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .tool-status:hover {
+            border-left-color: var(--primary);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .tool-status .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .indicator.active {
+            background: var(--success);
+            box-shadow: 0 0 12px var(--success);
+        }
+
+        .indicator.inactive {
+            background: var(--danger);
+        }
+
+        .indicator.standby {
+            background: var(--warning);
+            animation: pulse-warn 2s infinite;
+        }
+
+        /* LOG DISPLAY */
+        .log {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .log-entry {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry.info { color: var(--primary); }
+        .log-entry.success { color: var(--success); }
+        .log-entry.error { color: var(--danger); }
+        .log-entry.warning { color: var(--warning); }
+
+        /* CONNECTION PANEL */
+        .connection-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .connection-panel h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .connection-panel input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .telemetry-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .status-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .panel h2 {
+                font-size: 1.2rem;
+            }
+
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group-custom {
+                flex-direction: column;
+            }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ANIMATIONS */
+        @keyframes pulse-warn {
+            0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--warning); }
+            50% { opacity: 0.5; box-shadow: 0 0 6px var(--warning); }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-custom">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                <i class="fas fa-robot"></i> COBA AI Drone Control
+            </span>
+            <div style="color: #888;">
+                <i class="fas fa-circle" id="statusDot" style="color: #ff4444;"></i>
+                <span id="statusText" style="margin-left: 10px;">Disconnected</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="dashboard-container">
+        <!-- CONNECTION PANEL -->
+        <div class="connection-panel">
+            <h3><i class="fas fa-plug"></i> Connect to System</h3>
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 15px; margin-bottom: 15px;">
+                <input type="text" id="apiUrl" placeholder="http://localhost:8000" value="http://localhost:8000">
+                <button class="btn-primary-custom" onclick="connect()" style="white-space: nowrap;">
+                    <i class="fas fa-link"></i> Connect
+                </button>
+            </div>
+            <div id="connectionStatus" style="color: #888;">Ready to connect</div>
+        </div>
+
+        <!-- STATUS BAR -->
+        <div class="status-bar">
+            <div class="status-card">
+                <h3><i class="fas fa-robot"></i> System Status</h3>
+                <div class="status-value status-offline" id="agentStatus">OFFLINE</div>
+            </div>
+            <div class="status-card">
+                <h3><i class="fas fa-battery-half"></i> Battery</h3>
+                <div class="status-value" id="battery">--%</div>
+            </div>
+            <div class="status-card">
+                <h3><i class="fas fa-arrow-up"></i> Altitude</h3>
+                <div class="status-value" id="altitude">-- m</div>
+            </div>
+            <div class="status-card">
+                <h3><i class="fas fa-tachometer-alt"></i> Speed</h3>
+                <div class="status-value" id="speed">-- m/s</div>
+            </div>
+            <div class="status-card">
+                <h3><i class="fas fa-signal"></i> Signal</h3>
+                <div class="status-value" id="signal">--%</div>
+            </div>
+            <div class="status-card">
+                <h3><i class="fas fa-clock"></i> Flight Time</h3>
+                <div class="status-value" id="flightTime">00:00</div>
+            </div>
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="dashboard-grid">
+            <!-- TELEMETRY -->
+            <div class="panel">
+                <h2><i class="fas fa-chart-line"></i> Telemetry</h2>
+                <div class="telemetry-grid">
+                    <div class="telemetry-item">
+                        <div class="label">Position X</div>
+                        <div class="value" id="posX">0.0<span style="color: #666; font-size: 0.8rem;"> m</span></div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">Position Y</div>
+                        <div class="value" id="posY">0.0<span style="color: #666; font-size: 0.8rem;"> m</span></div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">Position Z</div>
+                        <div class="value" id="posZ">0.0<span style="color: #666; font-size: 0.8rem;"> m</span></div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">Roll</div>
+                        <div class="value" id="roll">0°</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">Pitch</div>
+                        <div class="value" id="pitch">0°</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">Yaw</div>
+                        <div class="value" id="yaw">0°</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROL PANEL -->
+            <div class="panel">
+                <h2><i class="fas fa-gamepad"></i> Flight Controls</h2>
+                <div class="btn-group-custom">
+                    <button class="btn-success-custom" onclick="sendCommand('takeoff', {altitude: 15})">
+                        <i class="fas fa-plane-departure"></i> Takeoff
+                    </button>
+                    <button class="btn-danger-custom" onclick="sendCommand('land')">
+                        <i class="fas fa-plane-arrival"></i> Land
+                    </button>
+                    <button class="btn-primary-custom" onclick="sendCommand('rtl')">
+                        <i class="fas fa-home"></i> RTL
+                    </button>
+                    <button class="btn-primary-custom" onclick="sendCommand('hover')">
+                        <i class="fas fa-pause-circle"></i> Hover
+                    </button>
+                </div>
+                <div class="input-group-custom">
+                    <label><i class="fas fa-compass"></i> Navigate to Point</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <input type="number" id="navX" placeholder="X" value="50">
+                        <input type="number" id="navY" placeholder="Y" value="50">
+                        <input type="number" id="navZ" placeholder="Z (m)" value="20">
+                    </div>
+                    <button class="btn-primary-custom" style="width: 100%; margin-top: 10px; justify-content: center;" onclick="navigate()">
+                        <i class="fas fa-arrow-right"></i> Navigate
+                    </button>
+                </div>
+            </div>
+
+            <!-- MISSION MAP -->
+            <div class="panel">
+                <h2><i class="fas fa-map"></i> Flight Visualization</h2>
+                <div class="mission-map" id="missionMap">
+                    <div class="home-base" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="drone-icon" id="droneIcon" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                        <i class="fas fa-drone"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCENARIOS (FULL WIDTH) -->
+            <div class="panel" style="grid-column: 1 / -1;">
+                <h2><i class="fas fa-rocket"></i> Pre-configured Scenarios</h2>
+                <div class="scenarios-grid">
+                    <div class="scenario-card" onclick="runScenario('patrol')">
+                        <i class="fas fa-eye"></i>
+                        <h4>Patrol</h4>
+                        <p>Automatic perimeter surveillance with photo capture</p>
+                    </div>
+                    <div class="scenario-card" onclick="runScenario('search')">
+                        <i class="fas fa-search"></i>
+                        <h4>Search & Detect</h4>
+                        <p>Object detection in designated area</p>
+                    </div>
+                    <div class="scenario-card" onclick="runScenario('survey')">
+                        <i class="fas fa-camera"></i>
+                        <h4>Survey</h4>
+                        <p>Territory mapping with serpentine flight</p>
+                    </div>
+                    <div class="scenario-card" onclick="runScenario('delivery')">
+                        <i class="fas fa-box"></i>
+                        <h4>Delivery</h4>
+                        <p>Autonomous cargo delivery to target</p>
+                    </div>
+                    <div class="scenario-card" onclick="runScenario('swarm')">
+                        <i class="fas fa-bezier-curve"></i>
+                        <h4>Swarm Flight</h4>
+                        <p>V-formation with dynamic reconfiguration</p>
+                    </div>
+                    <div class="scenario-card" onclick="runScenario('inspection')">
+                        <i class="fas fa-circle-notch"></i>
+                        <h4>Inspection</h4>
+                        <p>Orbital survey with 8-point imaging</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLS STATUS -->
+            <div class="panel">
+                <h2><i class="fas fa-toolbox"></i> System Tools</h2>
+                <div id="toolsList">
+                    <div class="tool-status">
+                        <div class="indicator active"></div>
+                        <span><strong>Slom</strong> - Security</span>
+                    </div>
+                    <div class="tool-status">
+                        <div class="indicator active"></div>
+                        <span><strong>MiFly</strong> - Flight Control</span>
+                    </div>
+                    <div class="tool-status">
+                        <div class="indicator standby"></div>
+                        <span><strong>Amorfus</strong> - Swarm Control</span>
+                    </div>
+                    <div class="tool-status">
+                        <div class="indicator active"></div>
+                        <span><strong>GeoMap</strong> - Mapping</span>
+                    </div>
+                    <div class="tool-status">
+                        <div class="indicator active"></div>
+                        <span><strong>ObjectDetection</strong> - YOLO AI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SYSTEM LOG (FULL WIDTH) -->
+            <div class="panel" style="grid-column: 1 / -1;">
+                <h2><i class="fas fa-terminal"></i> System Log</h2>
+                <div class="log" id="systemLog">
+                    <div class="log-entry info">[SYSTEM] Web interface loaded - ready to connect</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let apiUrl = 'http://localhost:8000';
+        let isConnected = false;
+        let telemetryInterval = null;
+        let flightStartTime = null;
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('systemLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logEl.insertBefore(entry, logEl.firstChild);
+
+            while (logEl.children.length > 100) {
+                logEl.removeChild(logEl.lastChild);
+            }
+        }
+
+        async function connect() {
+            apiUrl = document.getElementById('apiUrl').value || 'http://localhost:8000';
+
+            try {
+                log('Connecting to API...', 'info');
+                const response = await fetch(`${apiUrl}/health`);
+
+                if (response.ok) {
+                    isConnected = true;
+                    document.getElementById('connectionStatus').innerHTML =
+                        '<span style="color: var(--success);">✅ Connected Successfully</span>';
+                    document.getElementById('statusDot').style.color = 'var(--success)';
+                    document.getElementById('statusText').textContent = 'Connected';
+                    log('API connection established', 'success');
+                    flightStartTime = Date.now();
+                    startTelemetryUpdate();
+                } else {
+                    throw new Error('API not responding');
+                }
+            } catch (error) {
+                log(`Connection error: ${error.message}`, 'error');
+                document.getElementById('connectionStatus').innerHTML =
+                    '<span style="color: var(--danger);">❌ Connection Failed</span>';
+            }
+        }
+
+        async function sendCommand(command, params = {}) {
+            if (!isConnected) {
+                log('Please connect first', 'warning');
+                return;
+            }
+
+            try {
+                log(`Executing: ${command}...`, 'info');
+                const response = await fetch(`${apiUrl}/api/v1/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command, params })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    log(`Command ${command} executed successfully`, 'success');
+                } else {
+                    log(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function navigate() {
+            const x = document.getElementById('navX').value;
+            const y = document.getElementById('navY').value;
+            const z = document.getElementById('navZ').value;
+            sendCommand('goto', { x: parseFloat(x), y: parseFloat(y), z: parseFloat(z) });
+        }
+
+        async function startTelemetryUpdate() {
+            if (telemetryInterval) clearInterval(telemetryInterval);
+
+            telemetryInterval = setInterval(async () => {
+                if (!isConnected) return;
+
+                try {
+                    const response = await fetch(`${apiUrl}/api/v1/telemetry`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        updateTelemetry(data.telemetry);
+                    }
+                } catch (error) {}
+
+                if (flightStartTime) {
+                    const elapsed = Math.floor((Date.now() - flightStartTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('flightTime').textContent =
+                        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function updateTelemetry(telemetry) {
+            if (!telemetry) return;
+
+            if (telemetry.battery !== undefined) {
+                document.getElementById('battery').textContent = telemetry.battery.toFixed(1) + '%';
+            }
+
+            if (telemetry.position) {
+                document.getElementById('posX').textContent = telemetry.position.x?.toFixed(1) + ' m';
+                document.getElementById('posY').textContent = telemetry.position.y?.toFixed(1) + ' m';
+                document.getElementById('posZ').textContent = telemetry.position.z?.toFixed(1) + ' m';
+                document.getElementById('altitude').textContent = (telemetry.position.z?.toFixed(1) || '0') + ' m';
+                updateDronePosition(telemetry.position.x, telemetry.position.y);
+            }
+
+            if (telemetry.velocity) {
+                const vx = telemetry.velocity.vx || 0;
+                const vy = telemetry.velocity.vy || 0;
+                const vz = telemetry.velocity.vz || 0;
+                const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
+                document.getElementById('speed').textContent = speed.toFixed(1) + ' m/s';
+            }
+
+            if (telemetry.signal_strength !== undefined) {
+                document.getElementById('signal').textContent = telemetry.signal_strength + '%';
+            }
+
+            if (telemetry.attitude) {
+                document.getElementById('roll').textContent = (telemetry.attitude.roll || 0).toFixed(1) + '°';
+                document.getElementById('pitch').textContent = (telemetry.attitude.pitch || 0).toFixed(1) + '°';
+                document.getElementById('yaw').textContent = (telemetry.attitude.yaw || 0).toFixed(1) + '°';
+            }
+        }
+
+        function updateDronePosition(x, y) {
+            const drone = document.getElementById('droneIcon');
+            const map = document.getElementById('missionMap');
+
+            const scale = 2;
+            const centerX = map.offsetWidth / 2;
+            const centerY = map.offsetHeight / 2;
+
+            const pixelX = centerX + (x * scale);
+            const pixelY = centerY - (y * scale);
+
+            drone.style.left = Math.max(0, Math.min(map.offsetWidth - 30, pixelX)) + 'px';
+            drone.style.top = Math.max(0, Math.min(map.offsetHeight - 30, pixelY)) + 'px';
+        }
+
+        function runScenario(scenario) {
+            const scenarioNames = {
+                patrol: 'Patrol Mode',
+                search: 'Search & Detect',
+                survey: 'Territory Survey',
+                delivery: 'Cargo Delivery',
+                swarm: 'Swarm Formation',
+                inspection: 'Orbital Inspection'
+            };
+
+            log(`Starting scenario: ${scenarioNames[scenario]}...`, 'info');
+            sendCommand('scenario', { name: scenario });
+        }
+
+        window.addEventListener('load', () => {
+            log('Dashboard initialized - click "Connect" to begin', 'info');
+        });
+    </script>
+</body>
+</html>
