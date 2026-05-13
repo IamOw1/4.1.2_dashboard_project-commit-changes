@@ -1,12 +1,14 @@
 """
 REST API для управления дроном
 """
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, AsyncGenerator
 from datetime import datetime
 import asyncio
+import json
+import base64
 
 from agent.core import DroneIntelligentAgent
 from agent.advanced_learning import AdvancedLearningAgent
