@@ -13,11 +13,11 @@ function Test-Command {
     param([string]$Command)
     try {
         Get-Command $Command -ErrorAction Stop
-        Write-Host "[INFO] $Command found" -ForegroundColor Green
+        Write-Host "`[INFO] $Command found" -ForegroundColor Green
         return $true
     }
     catch {
-        Write-Host "[ERROR] $Command is not installed. Please install it first." -ForegroundColor Red
+        Write-Host "`[ERROR] $Command is not installed. Please install it first." -ForegroundColor Red
         return $false
     }
 }
@@ -27,10 +27,10 @@ function Install-PythonPackage {
     param([string]$Package)
     try {
         python -c "import $Package" 2>$null
-        Write-Host "[INFO] $Package already installed" -ForegroundColor Green
+        Write-Host "`[INFO] $Package already installed" -ForegroundColor Green
     }
     catch {
-        Write-Host "[WARN] $Package not found, installing..." -ForegroundColor Yellow
+        Write-Host "`[WARN] $Package not found, installing..." -ForegroundColor Yellow
         pip install $Package
     }
 }
@@ -43,14 +43,14 @@ try {
         $major = [int]$matches[1]
         $minor = [int]$matches[2]
         if ($major -lt 3 -or ($major -eq 3 -and $minor -lt 11)) {
-            Write-Host "[ERROR] Python 3.11+ required, found $pythonVersion" -ForegroundColor Red
+            Write-Host "`[ERROR] Python 3.11+ required, found $pythonVersion" -ForegroundColor Red
             exit 1
         }
-        Write-Host "[INFO] Python $pythonVersion ✓" -ForegroundColor Green
+        Write-Host "`[INFO] Python $pythonVersion ✓" -ForegroundColor Green
     }
 }
 catch {
-    Write-Host "[ERROR] Python not found" -ForegroundColor Red
+    Write-Host "`[ERROR] Python not found" -ForegroundColor Red
     exit 1
 }
 
@@ -61,11 +61,11 @@ if (!(Test-Command "npm")) { exit 1 }
 
 # Check SQLite
 try {
-    python -c "import sqlite3; print('SQLite version:', sqlite3.sqlite_version)" | Out-Null
-    Write-Host "[INFO] SQLite3 available" -ForegroundColor Green
+    python -c 'import sqlite3; print("SQLite version:", sqlite3.sqlite_version)' | Out-Null
+    Write-Host "`[INFO] SQLite3 available" -ForegroundColor Green
 }
 catch {
-    Write-Host "[ERROR] SQLite3 not available in Python" -ForegroundColor Red
+    Write-Host "`[ERROR] SQLite3 not available in Python" -ForegroundColor Red
     exit 1
 }
 
@@ -96,11 +96,11 @@ New-Item -ItemType Directory -Force -Path "logs" | Out-Null
 if (!(Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
-        Write-Host "[INFO] Created .env from .env.example" -ForegroundColor Green
-        Write-Host "[WARN] Please edit .env with your API keys and settings" -ForegroundColor Yellow
+        Write-Host "`[INFO] Created .env from .env.example" -ForegroundColor Green
+        Write-Host "`[WARN] Please edit .env with your API keys and settings" -ForegroundColor Yellow
     }
     else {
-        Write-Host "[WARN] .env.example not found, creating basic .env" -ForegroundColor Yellow
+        Write-Host "`[WARN] .env.example not found, creating basic .env" -ForegroundColor Yellow
         @"
 # COBA AI Drone Agent Environment Variables
 
@@ -120,16 +120,17 @@ SIMULATION_MODE=true
 SIMULATOR_TYPE=grid
 
 # RC Configuration
-RC_SOURCE=real
+RC_SOURCE=mock
 RC_DEVICE=0
 
 # Other settings
+DEMO_MODE=true
 LOG_LEVEL=INFO
 "@ | Out-File -FilePath ".env" -Encoding UTF8
     }
 }
 else {
-    Write-Host "[INFO] .env already exists" -ForegroundColor Green
+    Write-Host "`[INFO] .env already exists" -ForegroundColor Green
 }
 
 # Initialize database
@@ -200,24 +201,24 @@ if (!$SkipLLM) {
 
     # Check if Ollama is installed
     if (!(Test-Command "ollama")) {
-        Write-Host "[WARN] Ollama not found. Installing Ollama..." -ForegroundColor Yellow
+        Write-Host "`[WARN] Ollama not found. Installing Ollama..." -ForegroundColor Yellow
 
         # Download and install Ollama for Windows
         try {
             Invoke-WebRequest -Uri "https://ollama.ai/download/OllamaSetup.exe" -OutFile "OllamaSetup.exe"
             Start-Process -FilePath "OllamaSetup.exe" -ArgumentList "/S" -Wait
             Remove-Item "OllamaSetup.exe"
-            Write-Host "[INFO] Ollama installed successfully" -ForegroundColor Green
+            Write-Host "`[INFO] Ollama installed successfully" -ForegroundColor Green
         }
         catch {
-            Write-Host "[ERROR] Failed to install Ollama automatically" -ForegroundColor Red
-            Write-Host "[WARN] Please install Ollama manually from https://ollama.ai/" -ForegroundColor Yellow
-            Write-Host "[WARN] Then run: ollama pull deepseek-coder" -ForegroundColor Yellow
+            Write-Host "`[ERROR] Failed to install Ollama automatically" -ForegroundColor Red
+            Write-Host "`[WARN] Please install Ollama manually from https://ollama.ai/" -ForegroundColor Yellow
+            Write-Host "`[WARN] Then run: ollama pull deepseek-coder" -ForegroundColor Yellow
             exit 1
         }
     }
     else {
-        Write-Host "[INFO] Ollama already installed" -ForegroundColor Green
+        Write-Host "`[INFO] Ollama already installed" -ForegroundColor Green
     }
 
     # Start Ollama service
@@ -225,7 +226,7 @@ if (!$SkipLLM) {
     try {
         $ollamaProcess = Get-Process -Name "ollama" -ErrorAction SilentlyContinue
         if ($ollamaProcess) {
-            Write-Host "[INFO] Ollama is already running" -ForegroundColor Green
+            Write-Host "`[INFO] Ollama is already running" -ForegroundColor Green
         }
         else {
             Start-Process -FilePath "ollama" -ArgumentList "serve" -NoNewWindow
@@ -233,7 +234,7 @@ if (!$SkipLLM) {
         }
     }
     catch {
-        Write-Host "[WARN] Could not start Ollama service automatically" -ForegroundColor Yellow
+        Write-Host "`[WARN] Could not start Ollama service automatically" -ForegroundColor Yellow
     }
 
     # Pull the model
@@ -241,18 +242,18 @@ if (!$SkipLLM) {
     try {
         $models = ollama list 2>$null
         if ($models -match "deepseek-coder") {
-            Write-Host "[INFO] DeepSeek Coder model already available" -ForegroundColor Green
+            Write-Host "`[INFO] DeepSeek Coder model already available" -ForegroundColor Green
         }
         else {
             ollama pull deepseek-coder
             if ($LASTEXITCODE -ne 0) {
-                Write-Host "[ERROR] Failed to download model" -ForegroundColor Red
-                Write-Host "[WARN] You can try again later or use a different model" -ForegroundColor Yellow
+                Write-Host "`[ERROR] Failed to download model" -ForegroundColor Red
+                Write-Host "`[WARN] You can try again later or use a different model" -ForegroundColor Yellow
             }
         }
     }
     catch {
-        Write-Host "[WARN] Could not check/download model" -ForegroundColor Yellow
+        Write-Host "`[WARN] Could not check/download model" -ForegroundColor Yellow
     }
 
     # Test LLM

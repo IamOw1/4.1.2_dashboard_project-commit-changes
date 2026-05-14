@@ -478,6 +478,50 @@ class AmorfusTool(BaseTool):
             "leader_id": drone_id
         }
     
+    async def get_fleet_status(self) -> Dict[str, Any]:
+        """Алиас для REST API: статус роя в формате флота."""
+        return await self.action_get_swarm_status()
+
+    async def get_drone_telemetry(self, drone_id: str) -> Dict[str, Any]:
+        """Телеметрия одного дрона по идентификатору (REST API)."""
+        try:
+            idx = int(str(drone_id).replace("drone_", ""))
+        except ValueError:
+            idx = 0
+        st = self.swarm_state.get(idx) or next(iter(self.swarm_state.values()), None)
+        if st is None:
+            return {"altitude": 10.0, "speed": 0.0, "battery": 0.0}
+        return {
+            "drone_id": drone_id,
+            "altitude": float(st.position[2]),
+            "speed": float(np.linalg.norm(st.velocity)),
+            "battery": st.battery,
+            "position": st.position.tolist(),
+        }
+
+    async def set_formation(self, formation: str, spacing: float = 5.0) -> None:
+        """Установка строя (REST API)."""
+        self.formation = formation
+        _ = spacing  # зарезервировано для будущей геометрии
+
+    async def swap_leader(self, leader_id: int) -> None:
+        """Смена лидера роя (REST API)."""
+        self.leader_id = int(leader_id)
+
+    async def get_mesh_topology(self) -> Dict[str, Any]:
+        """Топология mesh для дашборда (демо на основе swarm_state)."""
+        nodes = [
+            {"id": f"drone_{i}", "role": "leader" if i == self.leader_id else "peer"}
+            for i in self.swarm_state
+        ]
+        links: List[Dict[str, Any]] = []
+        ids = sorted(self.swarm_state.keys())
+        for a in ids:
+            for b in ids:
+                if a < b:
+                    links.append({"from": f"drone_{a}", "to": f"drone_{b}", "rssi_dbm": -48})
+        return {"nodes": nodes, "links": links}
+
     async def action_get_swarm_status(self) -> Dict[str, Any]:
         """Получение статуса роя"""
         connected_count = sum(1 for s in self.swarm_state.values() if s.connected)

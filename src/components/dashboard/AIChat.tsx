@@ -3,6 +3,7 @@ import { MessageSquare, X, Send, Sparkles, Bot, Target } from "lucide-react";
 import { useMissions } from "@/lib/mission-context";
 import { initialFleet, missionTypeLabel, missionStatusLabel } from "@/lib/mock-data";
 import { useOps } from "@/lib/ops-context";
+import { api } from "@/lib/api-client";
 
 interface Msg {
   id: number;
@@ -42,21 +43,26 @@ export function AIChat() {
     return active;
   }, [missions]);
 
-  const send = (text: string) => {
+  const send = async (text: string) => {
     const t = text.trim();
     if (!t) return;
     const userMsg: Msg = { id: Date.now(), role: "user", text: t };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
-    setTimeout(() => {
-      const reply: Msg = {
-        id: Date.now() + 1,
-        role: "assistant",
-        text: smartReply(t, activeContext),
-      };
-      setMsgs((m) => [...m, reply]);
-      appendEvent({ level: "info", source: "AI", message: `Оператор отправил побочную инструкцию: ${t}` });
-    }, 600);
+    const r = await api.subAgentAsk<{ response?: string }>(t);
+    let body: string;
+    if (r.ok && r.data && typeof r.data === "object" && r.data.response != null) {
+      body = String(r.data.response);
+    } else {
+      body = smartReply(t, activeContext);
+    }
+    const reply: Msg = {
+      id: Date.now() + 1,
+      role: "assistant",
+      text: body,
+    };
+    setMsgs((m) => [...m, reply]);
+    appendEvent({ level: "info", source: "AI", message: `Оператор отправил побочную инструкцию: ${t}` });
   };
 
   const eventFeed = events.slice(0, 6);

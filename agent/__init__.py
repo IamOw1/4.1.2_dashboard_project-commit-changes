@@ -2,6 +2,7 @@
 COBA AI Drone Agent v4.1 - Основной модуль агента
 Обновлённая структура с разделением на core_agent и sub_agent
 """
+from .core import DroneIntelligentAgent
 from .core_agent import CoreAgent
 from .memory import ShortTermMemory, LongTermMemory
 from .decision_maker import DecisionMaker
@@ -12,6 +13,7 @@ from .roles import AgentRole, TaskPriority, TaskDistributor
 
 __all__ = [
     'CoreAgent',
+    'DroneIntelligentAgent',
     'SubAgent',
     'ShortTermMemory',
     'LongTermMemory',

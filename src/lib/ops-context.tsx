@@ -5,6 +5,7 @@ import {
   type Backup,
   type EventLog,
 } from "@/lib/mock-data";
+import { api } from "@/lib/api-client";
 
 export interface TrainingPoint {
   ep: number;
@@ -75,10 +76,22 @@ export function OpsProvider({ children }: { children: ReactNode }) {
 
   const toggleDemoMode = (mode: boolean) => {
     setDemoMode(mode);
-    appendEvent({
-      type: mode ? "info" : "system",
-      message: mode ? "🎮 Переключено в демо-режим" : "🔌 Переключено в реальный режим",
-      source: "Система",
+    void api.runtimeDemoMode(mode).then((r) => {
+      if (r.ok) {
+        appendEvent({
+          level: mode ? "info" : "warning",
+          source: "Система",
+          message: mode
+            ? "Демо-режим: UI и бэкенд синхронизированы (DEMO_MODE=true)."
+            : "Реальный режим: бэкенд DEMO_MODE=false (при смене RC/MAVLink может потребоваться перезапуск API).",
+        });
+      } else {
+        appendEvent({
+          level: "warning",
+          source: "Система",
+          message: "Режим изменён только в интерфейсе: сервер API недоступен.",
+        });
+      }
     });
   };
 

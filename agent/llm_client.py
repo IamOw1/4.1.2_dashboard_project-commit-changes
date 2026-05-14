@@ -63,8 +63,8 @@ class LLMClient:
         'pytorch': ['pt', 'bin', 'safetensors'] # PyTorch
     }
     
-    # DeepSeek API конфигурация
-    DEEPSEEK_API_KEY = "sk-27743e75aab840aeb6c14f4dd0e0f4f6"
+    # DeepSeek API конфигурация (ключ только из окружения)
+    DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
     DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
     DEEPSEEK_MODEL = "deepseek-chat"
     
@@ -80,7 +80,8 @@ class LLMClient:
         self._model_instance: Any = None
         self._tokenizer: Any = None
         self._use_deepseek = False
-        
+        self._stub_mode = False
+
         # Получаем путь к модели из переменных окружения
         if agent_type == "core":
             self.model_path = os.getenv("CORE_AGENT_MODEL_PATH")
@@ -176,10 +177,15 @@ class LLMClient:
             # Проверяем API ключ (может быть переопределён в .env)
             api_key = os.getenv("DEEPSEEK_API_KEY", self.DEEPSEEK_API_KEY)
             
-            if not api_key or api_key == "your_api_key_here":
-                logger.error("❌ API ключ DeepSeek не настроен!")
-                raise ValueError("API ключ DeepSeek отсутствует")
-            
+            if not api_key or api_key.strip() == "" or api_key == "your_api_key_here":
+                logger.warning(
+                    "⚠️ DEEPSEEK_API_KEY не задан — LLM работает в stub-режиме (демо без облака)."
+                )
+                self._use_deepseek = False
+                self._stub_mode = True
+                self.model_config = None
+                return
+
             self.model_config = ModelConfig(
                 format=ModelFormat.DEEPSEEK_API,
                 api_key=api_key,
@@ -191,7 +197,9 @@ class LLMClient:
             
         except Exception as e:
             logger.error(f"❌ Ошибка инициализации DeepSeek API: {e}")
-            raise
+            self._use_deepseek = False
+            self._stub_mode = True
+            self.model_config = None
     
     def _load_gguf_model(self) -> None:
         """Загружает GGUF модель через llama-cpp-python."""
@@ -306,12 +314,14 @@ class LLMClient:
             >>> response = client.generate("Привет! Как дела?")
             >>> print(response)
         """
+        if getattr(self, "_stub_mode", False):
+            return f"[демо-LLM] Заглушка: {prompt[:200]!r}"
         if self._use_deepseek:
             return self._generate_deepseek(prompt, max_tokens, temperature)
         elif self._model_instance:
             return self._generate_local(prompt, max_tokens, temperature)
         else:
-            raise RuntimeError("Модель не инициализирована!")
+            return f"[демо-LLM] Модель не загружена. Промпт: {prompt[:120]!r}"
     
     def _generate_local(self, prompt: str, max_tokens: int, temperature: float) -> str:
         """Генерирует ответ используя локальную модель."""

@@ -1,8 +1,8 @@
 /**
  * Типизированный клиент к Python FastAPI бэкенду COBA AI
- * (репозиторий IamOw1/4.1.2_dashboard_project, файл api/rest_api.py)
+ * (репозиторий https://github.com/IamOw1/4.1.2_dashboard_project-commit-changes, `api/rest_api.py`)
  *
- * 47 эндпоинтов сгруппированы по доменам. Каждый метод:
+ * Эндпоинты сгруппированы по доменам; полный список — `API.md` и `api/rest_api.py`.
  *   1) пытается дозвониться до бэкенда (BASE из VITE_API_URL, по умолч. http://localhost:8000)
  *   2) при ошибке возвращает fallback из мок-данных (если задан) — дашборд продолжает работать.
  *
@@ -128,11 +128,38 @@ export const api = {
     rawFetch<T>(`/api/v1/sub_agent/ask?q=${encodeURIComponent(question)}`),
   reportsMissions: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/reports/missions", {}, fb),
 
+  // --- Sensors (дашборд «Настройки» / сенсоры) ---
+  sensorsLinkQuality: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/sensors/link-quality", {}, fb),
+  sensorsEnvironment: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/sensors/environment", {}, fb),
+  sensorsNavigation: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/sensors/navigation", {}, fb),
+  sensorsVisual: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/sensors/visual", {}, fb),
+
   // --- Health / Settings ---
   health: () => rawFetch<{ status: string }>("/health", {}, undefined, true),
   settingsGet: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/settings", {}, fb),
   settingsSet: <T = unknown>(body: { key: string; value: unknown }) =>
     rawFetch<T>("/api/v1/settings", { method: "POST", body: JSON.stringify(body) }),
+
+  /** Переключатель «Демо / Реальный» в шапке дашборда → бэкенд. */
+  runtimeDemoMode: <T = unknown>(enabled: boolean) =>
+    rawFetch<T>("/api/v1/runtime/demo_mode", {
+      method: "POST",
+      body: JSON.stringify({ enabled }),
+    }),
+
+  simulatorsStatus: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/simulators/status", {}, fb),
+  simulatorsConnect: <T = unknown>(body: { simulator_id: string; host?: string; port?: number }) =>
+    rawFetch<T>("/api/v1/simulators/connect", { method: "POST", body: JSON.stringify(body) }),
+  simulatorsDisconnect: <T = unknown>() =>
+    rawFetch<T>("/api/v1/simulators/disconnect", { method: "POST", body: "{}" }),
+
+  /** On-premise загрузка GGUF/другого файла модели по URL (лимит см. API.md). */
+  modelsDownload: <T = unknown>(body: { url: string; slot: "core" | "sub" }) =>
+    rawFetch<T>("/api/v1/models/download", { method: "POST", body: JSON.stringify(body) }),
+
+  /** Самопроверка подсистем (кнопка «Запустить тест систем» в настройках). */
+  systemSelfTest: <T = unknown>(fb?: T) =>
+    rawFetch<T>("/api/v1/system/self_test", { method: "POST", body: "{}" }, fb),
 
   // --- Fleet / Mesh ---
   fleetStatus: <T = unknown>(fb?: T) => rawFetch<T>("/api/v1/fleet/status", {}, fb),

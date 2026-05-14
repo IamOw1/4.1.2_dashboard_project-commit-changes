@@ -12,7 +12,7 @@
 - **Управление в реальном времени**: FastAPI бэкенд с WebSocket потоком телеметрии
 - **Современный UI**: React 19 фронтенд с картами и графиками телеметрии в реальном времени
 - **Поддержка локальной LLM**: Интеграция Ollama для обработки ИИ на месте
-- **Управление RC**: Приоритетное управление DJI Mini 2 / RC-N1 с автоматической арбитрацией
+- **Управление RC**: приоритет оператора через RC-N1 / геймпад (демо — без железа); целевой профиль: **DJI Mavic 2 Mini** (реальный линк зависит от MAVLink/эмуляции, не от DJI Fly)
 - **Мультисимуляторы**: AirSim, встроенный сеточный симулятор и пользовательские симуляторы
 - **Комплексное тестирование**: Модульные, интеграционные и сквозные наборы тестов
 
@@ -41,7 +41,7 @@
 - **Хранилище**: 10GB свободного места
 
 ### Оборудование (опционально)
-- **Дрон**: DJI Mini 2 или совместимый дрон с MAVLink
+- **Дрон**: **DJI Mavic 2 Mini** (демо) или совместимый MAVLink; штатный DJI Fly с ПК не требуется
 - **RC Контроллер**: DJI RC-N1 или совместимый геймпад/джойстик
 - **Симулятор**: Unreal Engine с AirSim (опционально)
 
@@ -49,8 +49,8 @@
 
 ### 1. Клонирование
 ```bash
-git clone https://github.com/IamOw1/4.1.2_dashboard_project.git 
-cd 4.1.2_dashboard_project
+git clone https://github.com/IamOw1/4.1.2_dashboard_project-commit-changes.git
+cd 4.1.2_dashboard_project-commit-changes
 ```
 
 ### 2. Запуск демо-режима (без дрона)
@@ -128,7 +128,7 @@ chmod +x scripts/deploy_unified.sh
    DEEPSEEK_MODEL_NAME=deepseek-chat
    ```
 
-2. API ключ по умолчанию уже настроен: `sk-27743e75aab840aeb6c14f4dd0e0f4f6`
+2. Скопируйте `.env.example` в `.env` и задайте `DEEPSEEK_API_KEY` (или используйте только локальную LLM). **Не публикуйте ключи в репозитории.**
 
 3. Система автоматически переключится на DeepSeek API при запуске, если:
    - Локальная модель не найдена по пути из `CORE_AGENT_MODEL_PATH`
@@ -159,8 +159,8 @@ print(response)
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/IamOw1/4.1.2_dashboard_project.git
-   cd 4.1.2_dashboard_project
+   git clone https://github.com/IamOw1/4.1.2_dashboard_project-commit-changes.git
+   cd 4.1.2_dashboard_project-commit-changes
    ```
 
 2. **Run installation script**:
@@ -188,8 +188,8 @@ print(response)
 
 1. **Клонирование и навигация**:
    ```powershell
-   git clone https://github.com/IamOw1/4.1.2_dashboard_project.git
-   cd 4.1.2_dashboard_project
+   git clone https://github.com/IamOw1/4.1.2_dashboard_project-commit-changes.git
+   cd 4.1.2_dashboard_project-commit-changes
    ```
 
 2. **Пуск скрипта инсталляции**:
