@@ -196,7 +196,7 @@ class TaskDistributor:
         return False
 
 
-class DroneIntelligentAgent:
+class CoreAgent:
     """
     Основной класс интеллектуального агента для управления дроном.
     Объединённая версия с функциями из v3, v3.6 и новыми модулями.

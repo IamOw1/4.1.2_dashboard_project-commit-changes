@@ -5,6 +5,7 @@ import asyncio
 import json
 import logging
 from typing import Dict, List, Any, Optional
+from enum import Enum
 from datetime import datetime
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -609,3 +610,179 @@ class SubAgent:
         
         self.status = "shutdown"
         logger.info("Субагент завершил работу")
+
+
+# ============================================================================
+# КЛАССЫ ДЛЯ ЖИВОГО ЖУРНАЛА СОБЫТИЙ (ЧАСТЬ 5.4)
+# ============================================================================
+
+class EventType(Enum):
+    """Типы событий дрона."""
+    OBJECT_DETECTED = "object_detected"
+    LOW_BATTERY = "low_battery"
+    ROUTE_DEVIATION = "route_deviation"
+    MISSION_COMPLETE = "mission_complete"
+    EMERGENCY_LAND = "emergency_land"
+    SIGNAL_LOST = "signal_lost"
+    CUSTOM = "custom"
+
+
+@dataclass
+class DroneEvent:
+    """
+    Событие дрона для обработки суб-агентом.
+    
+    Attributes:
+        id: Уникальный идентификатор события
+        type: Тип события из EventType
+        drone_id: Идентификатор дрона
+        timestamp: Время события
+        data: Дополнительные данные события
+    """
+    id: str
+    type: EventType
+    drone_id: str
+    timestamp: datetime
+    data: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class ChatMessage:
+    """
+    Сообщение для чата с ИИ.
+    
+    Attributes:
+        role: Роль отправителя (assistant/user/system)
+        content: Текст сообщения
+        metadata: Метаданные (event_id, quick_actions, etc.)
+    """
+    role: str
+    content: str
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+
+# Расширение класса SubAgent методом on_drone_event
+def _on_drone_event(self, event: DroneEvent) -> ChatMessage:
+    """
+    Генерирует осмысленный комментарий для чата при событии дрона.
+    
+    Обрабатывает событие от дрона, выбирает соответствующий шаблон
+    и генерирует сообщение для пользователя с быстрыми действиями.
+    
+    Args:
+        event: Событие дрона типа DroneEvent
+    
+    Returns:
+        ChatMessage: Сгенерированное сообщение с метаданными
+    
+    Example:
+        >>> event = DroneEvent(
+        ...     id="evt_001",
+        ...     type=EventType.LOW_BATTERY,
+        ...     drone_id="drone_1",
+        ...     timestamp=datetime.now(),
+        ...     data={"battery": 15, "estimated_time": 5}
+        ... )
+        >>> msg = sub_agent._on_drone_event(event)
+        >>> print(msg.content)
+        "⚠️ Заряд 15% — рекомендую завершить миссию..."
+    """
+    # Шаблоны сообщений для различных событий
+    templates = {
+        EventType.OBJECT_DETECTED: (
+            "🔍 Я заметил {object_type} в координатах {coords}. "
+            "Хотите, чтобы я сделал детальный снимок?"
+        ),
+        EventType.LOW_BATTERY: (
+            "⚠️ Заряд {battery}% — рекомендую завершить миссию "
+            "или вернуться на базу. Осталось ~{estimated_time} мин."
+        ),
+        EventType.ROUTE_DEVIATION: (
+            "🧭 Дрон отклонился от маршрута на {deviation}м. "
+            "Причина: {reason}. Корректирую курс..."
+        ),
+        EventType.MISSION_COMPLETE: (
+            "✅ Миссия завершена успешно! "
+            "Полёт длился {duration} мин., пройдено {distance} км."
+        ),
+        EventType.EMERGENCY_LAND: (
+            "🚨 Экстренная посадка! Причина: {reason}. "
+            "Координаты: {lat}, {lon}. Ожидаю помощи..."
+        ),
+        EventType.SIGNAL_LOST: (
+            "📡 Потеря связи с оператором. "
+            "Активирован режим возврата домой (RTL)."
+        ),
+    }
+    
+    # Выбираем шаблон или используем дефолтный
+    template = templates.get(
+        event.type,
+        "📡 Событие: {description}"
+    )
+    
+    # Форматируем сообщение данными события
+    try:
+        message_content = template.format(**event.data)
+    except KeyError as e:
+        message_content = f"📡 Событие: {event.type.value} (ошибка шаблона: {e})"
+    
+    # Генерируем быстрые действия
+    quick_actions = self._suggest_actions_for_event(event)
+    
+    return ChatMessage(
+        role="assistant",
+        content=message_content,
+        metadata={
+            "event_id": event.id,
+            "drone_id": event.drone_id,
+            "timestamp": event.timestamp.isoformat(),
+            "event_type": event.type.value,
+            "quick_actions": quick_actions
+        }
+    )
+
+
+def _suggest_actions_for_event(self, event: DroneEvent) -> List[Dict[str, Any]]:
+    """
+    Предлагает быстрые действия в зависимости от типа события.
+    
+    Args:
+        event: Событие дрона
+    
+    Returns:
+        Список действий с label, action и confirm флагом
+    """
+    actions_map = {
+        EventType.OBJECT_DETECTED: [
+            {"label": "📸 Сделать снимок", "action": "take_snapshot", "confirm": False},
+            {"label": "🎯 Приблизиться", "action": "approach_object", "confirm": True},
+            {"label": "➡️ Игнорировать", "action": "ignore", "confirm": False},
+        ],
+        EventType.LOW_BATTERY: [
+            {"label": "🏠 Вернуться домой", "action": "rtl", "confirm": True},
+            {"label": "⬇️ Посадить сейчас", "action": "land", "confirm": True},
+            {"label": "⏳ Продолжить миссию", "action": "continue", "confirm": True},
+        ],
+        EventType.ROUTE_DEVIATION: [
+            {"label": "🔄 Вернуться на маршрут", "action": "resume_route", "confirm": False},
+            {"label": "🎯 Новая цель", "action": "new_target", "confirm": False},
+        ],
+        EventType.EMERGENCY_LAND: [
+            {"label": "🚁 Отправить помощь", "action": "dispatch_help", "confirm": True},
+            {"label": "📞 Связаться с оператором", "action": "contact_operator", "confirm": False},
+        ],
+    }
+    
+    return actions_map.get(event.type, [
+        {"label": "ℹ️ Подробнее", "action": "details", "confirm": False}
+    ])
+
+
+# Добавляем методы в класс SubAgent
+SubAgent.on_drone_event = _on_drone_event
+SubAgent._suggest_actions_for_event = _suggest_actions_for_event
+
+
+# Экспорт для удобства
+__all__ = ['SubAgent', 'SubAgentConfig', 'EventType', 'DroneEvent', 'ChatMessage']

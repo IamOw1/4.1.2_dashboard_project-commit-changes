@@ -1,0 +1,80 @@
+# Параметры по умолчанию для моделей LLM
+# Используется в llm_client.py и model_loader.py
+
+models:
+  # Модели для Core Agent (принятие стратегических решений)
+  core_agent:
+    recommended:
+      - name: Llama-3-8B-Instruct
+        format: gguf
+        quantization: Q4_K_M
+        size_gb: 4.9
+        url: https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF
+        use_case: Стратегические решения, координация агентов
+        
+      - name: Qwen2.5-7B-Instruct
+        format: gguf
+        quantization: Q5_K_S
+        size_gb: 5.2
+        url: https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF
+        use_case: Анализ данных, планирование миссий
+        
+  # Модели для Sub Agent (анализ данных, восприятие)
+  sub_agent:
+    recommended:
+      - name: Qwen2.5-7B-Instruct
+        format: gguf
+        quantization: Q5_K_S
+        size_gb: 5.2
+        url: https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF
+        use_case: Анализ телеметрии, распознавание событий
+        
+      - name: Phi-3-mini-4k-instruct
+        format: onnx
+        quantization: float16
+        size_gb: 2.1
+        url: https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-onnx
+        use_case: Лёгкие задачи, слабые ноутбуки
+
+# Поддерживаемые форматы
+formats:
+  gguf:
+    runtime: llama-cpp-python
+    quantizations:
+      - Q4_K_M   # Лучший баланс размер/качество
+      - Q5_K_S   # Высокое качество
+      - Q8_0     # Максимальное качество
+    gpu_acceleration: cuda, metal, vulkan
+    cpu_only: true
+    
+  onnx:
+    runtime: onnxruntime
+    precisions:
+      - float32
+      - float16
+    gpu_acceleration: cuda, directml
+    cpu_only: true
+    
+  pytorch:
+    runtime: transformers
+    formats:
+      - pt
+      - bin
+      - safetensors
+    gpu_acceleration: cuda
+    cpu_only: false
+    ram_requirement: high
+
+# Настройки загрузки по умолчанию
+defaults:
+  context_length: 4096
+  n_threads: null  # auto-detect
+  n_gpu_layers: 50  # для GGUF с GPU
+  verbose: false
+  
+# Пути по умолчанию
+paths:
+  models_root: backend/data/models
+  core_agent_subdir: core_agent
+  sub_agent_subdir: sub_agent
+  cache_dir: backend/data/cache

@@ -1,9 +1,10 @@
-import { Bell, Search, Wifi, Battery, Satellite, Server } from "lucide-react";
+import { Bell, Search, Wifi, Battery, Satellite, Server, Gamepad2, Plug } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useOps } from "@/lib/ops-context";
 import { pingBackend, getApiBaseUrl } from "@/lib/api-client";
 import { HelpTooltip } from "@/components/ui/help-tooltip";
 import { HELP } from "@/lib/help-texts";
+import { Button } from "@/components/ui/button";
 
 function useBackendStatus() {
   const [online, setOnline] = useState<boolean | null>(null);
@@ -32,7 +33,7 @@ function useClock() {
 
 export function Header() {
   const now = useClock();
-  const { trainingStatus, unreadEvents } = useOps();
+  const { trainingStatus, unreadEvents, demoMode, toggleDemoMode } = useOps();
   const backendOnline = useBackendStatus();
   const time = now?.toLocaleTimeString("ru-RU", { hour12: false }) ?? "--:--:--";
   const date = now?.toLocaleDateString("ru-RU", {
@@ -61,6 +62,28 @@ export function Header() {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
+        {/* Переключатель Демо/Реальный */}
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-muted p-1">
+          <Button
+            variant={demoMode ? "default" : "outline"}
+            size="sm"
+            onClick={() => toggleDemoMode(true)}
+            className={`h-7 px-3 text-xs ${demoMode ? "bg-green-600 hover:bg-green-700" : ""}`}
+          >
+            <Gamepad2 className="mr-1 h-3 w-3" />
+            Демо
+          </Button>
+          <Button
+            variant={!demoMode ? "default" : "outline"}
+            size="sm"
+            onClick={() => toggleDemoMode(false)}
+            className={`h-7 px-3 text-xs ${!demoMode ? "bg-blue-600 hover:bg-blue-700" : ""}`}
+          >
+            <Plug className="mr-1 h-3 w-3" />
+            Реальный
+          </Button>
+        </div>
+
         {/* backend status */}
         <div
           className="hidden items-center gap-1.5 rounded-md border border-border bg-card/60 px-2.5 py-1.5 md:flex"

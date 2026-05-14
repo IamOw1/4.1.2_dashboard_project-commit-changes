@@ -1,1 +1,51 @@
-Nothing should be ignored in this case, as the changes only include Python source files (.py) which are legitimate code files to track in version control.
+```gitignore
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.python-version
+.pytest_cache/
+.mypy_cache/
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Data state files (if they contain sensitive state info)
+data/state/*.json
+```
