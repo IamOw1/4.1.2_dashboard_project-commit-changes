@@ -1,212 +1,502 @@
 """
-COBA AI Drone Agent - Локальный клиент LLM
-Предоставляет интерфейс к локальной LLM через Ollama API с резервным копированием облачных API
+Клиент для работы с языковыми моделями (локальными и облачными).
+
+Поддерживает три формата моделей:
+- GGUF (через llama-cpp-python)
+- ONNX (через onnxruntime)
+- PyTorch (через transformers)
+
+Также поддерживает облачные API (DeepSeek) как fallback.
+
+Приоритет подключения:
+1. Локальная модель (GGUF/ONNX/PyTorch)
+2. DeepSeek API (если локальная модель не найдена)
 """
 
-import asyncio
-import json
+import os
 import logging
-import sqlite3
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from typing import Dict, List, Optional, Any, Union
+from pathlib import Path
+from dataclasses import dataclass, field
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
-@dataclass
-class LLMConfig:
-    """Конфигурация для клиента LLM"""
-    model_name: str = "deepseek-coder"
-    endpoint_url: str = "http://localhost:11434"
-    timeout: int = 30
-    max_retries: int = 3
-    temperature: float = 0.7
-    max_tokens: int = 2048
+
+class ModelFormat(Enum):
+    """Поддерживаемые форматы моделей."""
+    GGUF = "gguf"
+    ONNX = "onnx"
+    PYTORCH = "pytorch"
+    DEEPSEEK_API = "deepseek_api"
+
 
 @dataclass
-class LLMResponse:
-    """Ответ от LLM"""
-    text: str
-    model: str
-    usage: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+class ModelConfig:
+    """Конфигурация модели."""
+    format: ModelFormat
+    path: Optional[str] = None
+    quantization: Optional[str] = None
+    api_key: Optional[str] = None
+    model_name: Optional[str] = None
+    is_local: bool = True
+
 
 class LLMClient:
-    """Клиент для взаимодействия с локальной LLM через Ollama"""
-
-    def __init__(self, config: Optional[LLMConfig] = None, db_path: str = "data/memory/knowledge_base.db"):
-        self.config = config or LLMConfig()
-        self.db_path = db_path
-        self.session = self._create_session()
-
-    def _create_session(self) -> requests.Session:
-        """Создать HTTP сеанс со стратегией повтора"""
-        session = requests.Session()
-        retry = Retry(
-            total=self.config.max_retries,
-            backoff_factor=1,
-            status_forcelist=[429, 500, 502, 503, 504],
-        )
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        return session
-
-    async def health_check(self) -> bool:
-        """Проверить если LLM сервис доступен"""
-        try:
-            response = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.session.get(
-                    f"{self.config.endpoint_url}/api/tags",
-                    timeout=5
-                )
+    """
+    Клиент для работы с языковыми моделями.
+    
+    Приоритет подключения:
+    1. Локальная модель (GGUF/ONNX/PyTorch)
+    2. DeepSeek API (если локальная модель не найдена)
+    
+    Attributes:
+        SUPPORTED_FORMATS: Словарь поддерживаемых форматов и квантований.
+        DEEPSEEK_API_KEY: API ключ для DeepSeek.
+        DEEPSEEK_BASE_URL: Базовый URL API DeepSeek.
+        DEEPSEEK_MODEL: Название модели DeepSeek по умолчанию.
+    """
+    
+    SUPPORTED_FORMATS = {
+        'gguf': ['Q4_K_M', 'Q5_K_S', 'Q8_0'],  # llama.cpp
+        'onnx': ['float32', 'float16'],         # ONNX Runtime
+        'pytorch': ['pt', 'bin', 'safetensors'] # PyTorch
+    }
+    
+    # DeepSeek API конфигурация
+    DEEPSEEK_API_KEY = "sk-27743e75aab840aeb6c14f4dd0e0f4f6"
+    DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
+    DEEPSEEK_MODEL = "deepseek-chat"
+    
+    def __init__(self, agent_type: str = "core"):
+        """
+        Инициализирует LLM клиент.
+        
+        Args:
+            agent_type: Тип агента ('core' или 'sub').
+        """
+        self.agent_type = agent_type
+        self.model_config: Optional[ModelConfig] = None
+        self._model_instance: Any = None
+        self._tokenizer: Any = None
+        self._use_deepseek = False
+        
+        # Получаем путь к модели из переменных окружения
+        if agent_type == "core":
+            self.model_path = os.getenv("CORE_AGENT_MODEL_PATH")
+        else:
+            self.model_path = os.getenv("SUB_AGENT_MODEL_PATH")
+        
+        self.model_format = os.getenv("AGENT_MODEL_FORMAT", "gguf")
+        self.quantization = os.getenv("AGENT_QUANTIZATION", "Q4_K_M")
+        
+        # Проверяем наличие локальной модели
+        if not self._check_local_model_exists():
+            logger.warning(
+                f"⚠️ Локальная модель не найдена по пути: {self.model_path}. "
+                f"Используем DeepSeek API как fallback."
             )
-
-            if response.status_code == 200:
-                data = response.json()
-                models = [model['name'] for model in data.get('models', [])]
-                if self.config.model_name in models:
-                    logger.info(f"LLM health check passed. Available models: {models}")
-                    return True
-                else:
-                    logger.warning(f"Model {self.config.model_name} not available. Available: {models}")
-                    return False
-
-            logger.error(f"LLM health check failed with status {response.status_code}")
+            self._use_deepseek = True
+            self._init_deepseek()
+        else:
+            logger.info(f"✅ Найдена локальная модель: {self.model_path}")
+            self._init_local_model()
+    
+    def _check_local_model_exists(self) -> bool:
+        """
+        Проверяет существование файла локальной модели.
+        
+        Returns:
+            bool: True если файл существует и имеет размер > 10 МБ.
+        """
+        if not self.model_path:
             return False
-
-        except Exception as e:
-            logger.error(f"LLM health check error: {e}")
+        
+        path = Path(self.model_path)
+        if not path.exists():
             return False
-
-    async def generate(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> LLMResponse:
-        """Generate response from LLM"""
-        try:
-            # Prepare request payload
-            payload = {
-                "model": self.config.model_name,
-                "prompt": prompt,
-                "stream": False,
-                "options": {
-                    "temperature": self.config.temperature,
-                    "num_predict": self.config.max_tokens,
-                }
-            }
-
-            # Add context if provided
-            if context:
-                system_prompt = context.get('system_prompt', '')
-                if system_prompt:
-                    payload['system'] = system_prompt
-
-            logger.debug(f"Sending request to LLM: {payload}")
-
-            # Make request
-            response = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.session.post(
-                    f"{self.config.endpoint_url}/api/generate",
-                    json=payload,
-                    timeout=self.config.timeout
-                )
+        
+        # Проверка минимального размера (10 МБ)
+        min_size = 10 * 1024 * 1024  # 10 MB
+        if path.stat().st_size < min_size:
+            logger.warning(
+                f"Файл модели слишком маленький ({path.stat().st_size} байт). "
+                f"Ожидалось минимум {min_size} байт."
             )
-
-            if response.status_code == 200:
-                data = response.json()
-                text = data.get('response', '').strip()
-
-                usage = {
-                    'eval_count': data.get('eval_count'),
-                    'eval_duration': data.get('eval_duration'),
-                    'total_duration': data.get('total_duration'),
-                }
-
-                logger.info(f"LLM response generated successfully ({len(text)} chars)")
-                return LLMResponse(
-                    text=text,
-                    model=self.config.model_name,
-                    usage=usage
-                )
+            return False
+        
+        return True
+    
+    def _init_local_model(self) -> None:
+        """
+        Инициализирует локальную модель.
+        
+        Raises:
+            ImportError: Если необходимая библиотека не установлена.
+        """
+        try:
+            format_lower = self.model_format.lower()
+            
+            if format_lower == 'gguf':
+                self._load_gguf_model()
+            elif format_lower == 'onnx':
+                self._load_onnx_model()
+            elif format_lower in ['pytorch', 'pt', 'bin', 'safetensors']:
+                self._load_pytorch_model()
             else:
-                error_msg = f"LLM API error: {response.status_code} - {response.text}"
-                logger.error(error_msg)
-                return LLMResponse(
-                    text="",
-                    model=self.config.model_name,
-                    error=error_msg
+                raise ValueError(f"Неподдерживаемый формат: {self.model_format}")
+            
+            self.model_config = ModelConfig(
+                format=ModelFormat(format_lower),
+                path=self.model_path,
+                quantization=self.quantization,
+                is_local=True
+            )
+            
+            logger.info(f"✅ Локальная модель успешно загружена: {self.model_path}")
+            
+        except ImportError as e:
+            logger.error(f"❌ Ошибка импорта библиотеки: {e}")
+            logger.info("💡 Переключаемся на DeepSeek API...")
+            self._use_deepseek = True
+            self._init_deepseek()
+        except Exception as e:
+            logger.error(f"❌ Ошибка загрузки локальной модели: {e}")
+            logger.info("💡 Переключаемся на DeepSeek API...")
+            self._use_deepseek = True
+            self._init_deepseek()
+    
+    def _init_deepseek(self) -> None:
+        """
+        Инициализирует клиент для работы с DeepSeek API.
+        
+        Проверяет наличие API ключа и устанавливает соединение.
+        """
+        try:
+            # Проверяем API ключ (может быть переопределён в .env)
+            api_key = os.getenv("DEEPSEEK_API_KEY", self.DEEPSEEK_API_KEY)
+            
+            if not api_key or api_key == "your_api_key_here":
+                logger.error("❌ API ключ DeepSeek не настроен!")
+                raise ValueError("API ключ DeepSeek отсутствует")
+            
+            self.model_config = ModelConfig(
+                format=ModelFormat.DEEPSEEK_API,
+                api_key=api_key,
+                model_name=self.DEEPSEEK_MODEL,
+                is_local=False
+            )
+            
+            logger.info(f"✅ DeepSeek API инициализирован (модель: {self.DEEPSEEK_MODEL})")
+            
+        except Exception as e:
+            logger.error(f"❌ Ошибка инициализации DeepSeek API: {e}")
+            raise
+    
+    def _load_gguf_model(self) -> None:
+        """Загружает GGUF модель через llama-cpp-python."""
+        try:
+            from llama_cpp import Llama
+            
+            llm_kwargs = {
+                "model_path": self.model_path,
+                "n_ctx": 4096,
+                "n_threads": 4,
+                "verbose": False
+            }
+            
+            # Добавляем GPU слои если доступна CUDA
+            if self.quantization and 'K_M' in self.quantization:
+                llm_kwargs["n_gpu_layers"] = -1  # Все слои на GPU
+            
+            self._model_instance = Llama(**llm_kwargs)
+            
+        except ImportError:
+            logger.error("❌ Библиотека llama-cpp-python не установлена!")
+            logger.info("💡 Установите: pip install llama-cpp-python[cuda]")
+            raise
+    
+    def _load_onnx_model(self) -> None:
+        """Загружает ONNX модель через onnxruntime."""
+        try:
+            import onnxruntime as ort
+            
+            sess_options = ort.SessionOptions()
+            sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+            
+            self._model_instance = ort.InferenceSession(
+                self.model_path,
+                sess_options,
+                providers=['CUDAExecutionProvider', 'CPUExecutionProvider']
+            )
+            
+        except ImportError:
+            logger.error("❌ Библиотека onnxruntime не установлена!")
+            logger.info("💡 Установите: pip install onnxruntime-gpu")
+            raise
+    
+    def _load_pytorch_model(self) -> None:
+        """Загружает PyTorch модель через transformers."""
+        try:
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+            
+            model_dir = os.path.dirname(self.model_path)
+            
+            self._tokenizer = AutoTokenizer.from_pretrained(
+                model_dir,
+                trust_remote_code=True
+            )
+            
+            self._model_instance = AutoModelForCausalLM.from_pretrained(
+                model_dir,
+                torch_dtype="auto",
+                device_map="auto",
+                trust_remote_code=True
+            )
+            
+        except ImportError:
+            logger.error("❌ Библиотека transformers не установлена!")
+            logger.info("💡 Установите: pip install transformers torch")
+            raise
+    
+    def load_local_model(self, model_path: str, format: str) -> bool:
+        """
+        Загружает локальную LLM для Core/Sub агента.
+        
+        Args:
+            model_path: Путь к файлу модели.
+            format: Один из SUPPORTED_FORMATS ('gguf', 'onnx', 'pytorch').
+            
+        Returns:
+            bool: True если загрузка успешна.
+            
+        Example:
+            >>> client = LLMClient()
+            >>> success = client.load_local_model("models/llama.gguf", "gguf")
+        """
+        try:
+            self.model_path = model_path
+            self.model_format = format
+            self._use_deepseek = False
+            self._init_local_model()
+            return True
+        except Exception as e:
+            logger.error(f"❌ Ошибка загрузки модели: {e}")
+            return False
+    
+    def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.7) -> str:
+        """
+        Генерирует ответ на основе промпта.
+        
+        Автоматически выбирает между локальной моделью и DeepSeek API.
+        
+        Args:
+            prompt: Входной текст для генерации.
+            max_tokens: Максимальное количество токенов в ответе.
+            temperature: Температура генерации (0.0-2.0).
+            
+        Returns:
+            str: Сгенерированный ответ.
+            
+        Raises:
+            RuntimeError: Если ни одна модель не инициализирована.
+            
+        Example:
+            >>> client = LLMClient()
+            >>> response = client.generate("Привет! Как дела?")
+            >>> print(response)
+        """
+        if self._use_deepseek:
+            return self._generate_deepseek(prompt, max_tokens, temperature)
+        elif self._model_instance:
+            return self._generate_local(prompt, max_tokens, temperature)
+        else:
+            raise RuntimeError("Модель не инициализирована!")
+    
+    def _generate_local(self, prompt: str, max_tokens: int, temperature: float) -> str:
+        """Генерирует ответ используя локальную модель."""
+        try:
+            if self.model_config.format == ModelFormat.GGUF:
+                # GGUF генерация
+                output = self._model_instance(
+                    prompt,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                    stop=["</s>", "User:", "Assistant:"]
                 )
-
+                return output['choices'][0]['text']
+            
+            elif self.model_config.format == ModelFormat.ONNX:
+                # ONNX генерация (упрощённая)
+                logger.warning("ONNX генерация требует дополнительной настройки")
+                return "[ONNX ответ]"
+            
+            elif self.model_config.format == ModelFormat.PYTORCH:
+                # PyTorch генерация
+                inputs = self._tokenizer(prompt, return_tensors="pt").to(
+                    self._model_instance.device
+                )
+                outputs = self._model_instance.generate(
+                    **inputs,
+                    max_new_tokens=max_tokens,
+                    temperature=temperature,
+                    do_sample=True,
+                    pad_token_id=self._tokenizer.eos_token_id
+                )
+                return self._tokenizer.decode(outputs[0], skip_special_tokens=True)
+            
+            else:
+                raise ValueError(f"Неподдерживаемый формат: {self.model_config.format}")
+                
         except Exception as e:
-            error_msg = f"LLM generation error: {str(e)}"
-            logger.error(error_msg)
-            return LLMResponse(
-                text="",
-                model=self.config.model_name,
-                error=error_msg
-            )
-
-    def update_model_status(self, status: str):
-        """Update model status in database"""
+            logger.error(f"❌ Ошибка генерации локальной моделью: {e}")
+            # Fallback на DeepSeek при ошибке
+            logger.info("💡 Переключаемся на DeepSeek API...")
+            self._use_deepseek = True
+            return self._generate_deepseek(prompt, max_tokens, temperature)
+    
+    def _generate_deepseek(self, prompt: str, max_tokens: int, temperature: float) -> str:
+        """
+        Генерирует ответ используя DeepSeek API.
+        
+        Args:
+            prompt: Входной промпт.
+            max_tokens: Максимум токенов.
+            temperature: Температура генерации.
+            
+        Returns:
+            str: Ответ от API.
+        """
         try:
-            conn = sqlite3.connect(self.db_path)
-            conn.execute(
-                "UPDATE llm_models SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE name = ?",
-                (status, self.config.model_name)
+            import requests
+            
+            headers = {
+                "Authorization": f"Bearer {self.model_config.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": self.DEEPSEEK_MODEL,
+                "messages": [
+                    {"role": "system", "content": "Вы полезный ассистент для управления дронами."},
+                    {"role": "user", "content": prompt}
+                ],
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "stream": False
+            }
+            
+            response = requests.post(
+                f"{self.DEEPSEEK_BASE_URL}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
             )
-            conn.commit()
-            conn.close()
-            logger.info(f"Updated model {self.config.model_name} status to {status}")
+            
+            response.raise_for_status()
+            data = response.json()
+            
+            return data['choices'][0]['message']['content']
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"❌ Ошибка запроса к DeepSeek API: {e}")
+            return f"[Ошибка API: {str(e)}]"
         except Exception as e:
-            logger.error(f"Failed to update model status: {e}")
-
-    async def get_available_models(self) -> List[str]:
-        """Get list of available models from Ollama"""
+            logger.error(f"❌ Неожиданная ошибка DeepSeek API: {e}")
+            return f"[Ошибка генерации: {str(e)}]"
+    
+    def get_status(self) -> Dict[str, Any]:
+        """
+        Возвращает статус модели.
+        
+        Returns:
+            Dict: Информация о текущей модели и режиме работы.
+            
+        Example:
+            >>> client = LLMClient()
+            >>> status = client.get_status()
+            >>> print(status['mode'])  # 'local' или 'deepseek_api'
+        """
+        return {
+            "agent_type": self.agent_type,
+            "mode": "deepseek_api" if self._use_deepseek else "local",
+            "model_path": self.model_path if not self._use_deepseek else None,
+            "model_format": self.model_config.format.value if self.model_config else None,
+            "is_local": self.model_config.is_local if self.model_config else False,
+            "model_name": self.model_config.model_name if self.model_config and not self.model_config.is_local else None,
+            "initialized": self._model_instance is not None or self._use_deepseek
+        }
+    
+    def switch_to_deepseek(self) -> bool:
+        """
+        Принудительно переключает на DeepSeek API.
+        
+        Returns:
+            bool: True если переключение успешно.
+        """
         try:
-            response = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.session.get(f"{self.config.endpoint_url}/api/tags", timeout=5)
-            )
-
-            if response.status_code == 200:
-                data = response.json()
-                return [model['name'] for model in data.get('models', [])]
-            return []
+            self._use_deepseek = True
+            self._init_deepseek()
+            logger.info("✅ Принудительное переключение на DeepSeek API")
+            return True
         except Exception as e:
-            logger.error(f"Failed to get available models: {e}")
-            return []
+            logger.error(f"❌ Ошибка переключения на DeepSeek: {e}")
+            return False
+    
+    def switch_to_local(self, model_path: str, format: str) -> bool:
+        """
+        Принудительно переключает на локальную модель.
+        
+        Args:
+            model_path: Путь к модели.
+            format: Формат модели.
+            
+        Returns:
+            bool: True если переключение успешно.
+        """
+        try:
+            self._use_deepseek = False
+            success = self.load_local_model(model_path, format)
+            if success:
+                logger.info(f"✅ Принудительное переключение на локальную модель: {model_path}")
+            return success
+        except Exception as e:
+            logger.error(f"❌ Ошибка переключения на локальную модель: {e}")
+            self._use_deepseek = True
+            return False
 
-# Global client instance
-_llm_client = None
 
-def get_llm_client() -> LLMClient:
-    """Get or create global LLM client instance"""
-    global _llm_client
-    if _llm_client is None:
-        _llm_client = LLMClient()
-    return _llm_client
+__all__ = ["LLMClient", "ModelFormat", "ModelConfig"]
 
-async def generate_with_fallback(prompt: str, context: Optional[Dict[str, Any]] = None) -> LLMResponse:
+
+# Функции обратной совместимости для старых импортов
+def get_llm_client(agent_type: str = "core") -> LLMClient:
     """
-    Generate response with fallback to cloud APIs if local LLM fails
+    Возвращает экземпляр LLM клиента.
+    
+    Args:
+        agent_type: Тип агента ('core' или 'sub').
+        
+    Returns:
+        LLMClient: Инициализированный клиент.
     """
-    client = get_llm_client()
+    return LLMClient(agent_type=agent_type)
 
-    # Try local LLM first
-    if await client.health_check():
-        response = await client.generate(prompt, context)
-        if not response.error:
-            return response
 
-    # Fallback to cloud APIs (implement based on available keys)
-    logger.warning("Local LLM failed, attempting cloud fallback...")
+def generate_with_fallback(prompt: str, agent_type: str = "core", **kwargs) -> str:
+    """
+    Генерирует ответ с автоматическим fallback.
+    
+    Args:
+        prompt: Входной промпт.
+        agent_type: Тип агента.
+        **kwargs: Дополнительные параметры для generate().
+        
+    Returns:
+        str: Сгенерированный ответ.
+    """
+    client = LLMClient(agent_type=agent_type)
+    return client.generate(prompt, **kwargs)
 
-    # TODO: Implement cloud API fallbacks (OpenAI, DeepSeek)
-    # For now, return error
-    return LLMResponse(
-        text="",
-        model="fallback",
-        error="Local LLM unavailable and no cloud fallback configured"
-    )
+
+__all__ = ["LLMClient", "ModelFormat", "ModelConfig", "get_llm_client", "generate_with_fallback"]

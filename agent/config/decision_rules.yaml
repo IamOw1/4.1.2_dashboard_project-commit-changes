@@ -1,0 +1,43 @@
+# Правила принятия решений для агентов
+# Используется в decision_maker.py
+
+rules:
+  # Правила для демо-режима
+  demo_mode:
+    allow_commands: true
+    simulate_latency_ms: 50
+    noise_level: 0.05  # 5% шум в телеметрии
+    
+  # Правила для реального режима
+  real_mode:
+    allow_commands: true
+    require_confirmation:
+      - TAKEOFF
+      - LAND
+      - RTL
+    max_altitude_m: 120
+    max_distance_m: 500
+    
+  # Приоритеты команд
+  command_priorities:
+    EMERGENCY_LAND: 10
+    RTL: 9
+    HOVER: 8
+    LAND: 7
+    TAKEOFF: 6
+    GOTO: 5
+    MOVE: 4
+    
+  # Условия аварийной посадки
+  emergency_conditions:
+    battery_critical_percent: 15
+    battery_low_percent: 30
+    signal_loss_timeout_s: 5
+    gps_satellites_min: 4
+    
+  # Правила избегания препятствий
+  obstacle_avoidance:
+    enabled: true
+    min_distance_m: 2.0
+    brake_distance_m: 1.5
+    avoidance_angle_deg: 45
