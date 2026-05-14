@@ -339,7 +339,7 @@ def run_all():
 
 
 def print_banner():
-    """Вывод баннера"""
+    """Вывод баннера (UTF-8; на Windows cp1251 — безопасный fallback)."""
     banner = """
     ╔══════════════════════════════════════════════════════════════════╗
     ║                                                                  ║
@@ -350,7 +350,15 @@ def print_banner():
     ║                                                                  ║
     ╚══════════════════════════════════════════════════════════════════╝
     """
-    print(banner)
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+    try:
+        print(banner)
+    except UnicodeEncodeError:
+        print("COBA AI Drone Agent v4.0 — Core Agent + Sub-Agent | Mesh | PitControllers")
 
 
 def print_help():

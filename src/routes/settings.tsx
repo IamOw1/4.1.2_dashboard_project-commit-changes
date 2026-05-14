@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Camera, Radar, Navigation, Radio, Thermometer, Wifi, PlayCircle, Save, Trash2 } from "lucide-react";
+import { Camera, Radar, Navigation, Radio, Thermometer, Wifi, PlayCircle, Save, Trash2, Brain, Download, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Panel, StatCard } from "@/components/dashboard/Panel";
+import { api } from "@/lib/api-client";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -32,8 +33,79 @@ function SettingsPage() {
   const [profileName, setProfileName] = useState("Профиль A");
   const [profiles, setProfiles] = useState<SettingsProfile[]>([]);
   const [savedHint, setSavedHint] = useState(false);
+  const [linkQ, setLinkQ] = useState<{ wifi?: number | string; loss?: string }>({});
+  const [envS, setEnvS] = useState<{ t?: string; p?: string }>({});
+  const [navS, setNavS] = useState<{ gps?: string; sats?: string }>({});
+  const [visS, setVisS] = useState<{ cam?: string }>({});
+  const [modelUrl, setModelUrl] = useState("");
+  const [modelSlot, setModelSlot] = useState<"core" | "sub">("core");
+  const [modelBusy, setModelBusy] = useState(false);
+  const [modelHint, setModelHint] = useState<string | null>(null);
 
-  // load on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [lq, env, nav, vis] = await Promise.all([
+        api.sensorsLinkQuality(),
+        api.sensorsEnvironment(),
+        api.sensorsNavigation(),
+        api.sensorsVisual(),
+      ]);
+      if (cancelled) return;
+      if (lq.ok && lq.data && typeof lq.data === "object") {
+        const d = lq.data as Record<string, unknown>;
+        setLinkQ({
+          wifi: typeof d.wifi_dbm === "number" ? d.wifi_dbm : String(d.wifi_dbm ?? "—"),
+          loss: d.packet_loss_pct != null ? `${d.packet_loss_pct}%` : "—",
+        });
+      }
+      if (env.ok && env.data && typeof env.data === "object") {
+        const d = env.data as Record<string, unknown>;
+        setEnvS({
+          t: d.temperature_c != null ? `${d.temperature_c}°C` : "—",
+          p: d.pressure_mmhg != null ? `${d.pressure_mmhg} мм` : "—",
+        });
+      }
+      if (nav.ok && nav.data && typeof nav.data === "object") {
+        const d = nav.data as Record<string, unknown>;
+        setNavS({
+          gps: String(d.gps_fix ?? "—"),
+          sats: d.satellites != null ? String(d.satellites) : "—",
+        });
+      }
+      if (vis.ok && vis.data && typeof vis.data === "object") {
+        const d = vis.data as Record<string, unknown>;
+        setVisS({ cam: String(d.main_camera ?? "—") });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const runSystemTest = async () => {
+    const r = await api.systemSelfTest();
+    setSystemTested(r.ok);
+  };
+
+  const downloadModel = async () => {
+    const url = modelUrl.trim();
+    if (!url) {
+      setModelHint("Введите URL модели (http/https).");
+      return;
+    }
+    setModelBusy(true);
+    setModelHint(null);
+    const r = await api.modelsDownload({ url, slot: modelSlot });
+    setModelBusy(false);
+    if (r.ok && r.data && typeof r.data === "object") {
+      const d = r.data as Record<string, unknown>;
+      setModelHint(`Файл сохранён: ${String(d.path ?? "")} (${String(d.bytes ?? "")} байт). Переменная ${String(d.env_key ?? "")} обновлена в процессе API.`);
+    } else {
+      setModelHint(r.error ?? "Не удалось скачать модель (проверьте URL и лимит 512 МБ).");
+    }
+  };
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -110,7 +182,8 @@ function SettingsPage() {
           <div className="flex gap-2">
             <input value={profileName} onChange={(e) => setProfileName(e.target.value)} className="rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground" />
             <button
-              onClick={() => setSystemTested(true)}
+              type="button"
+              onClick={() => void runSystemTest()}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
             >
               <PlayCircle className="h-4 w-4" /> Запустить тест систем
@@ -120,29 +193,41 @@ function SettingsPage() {
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Визуальные сенсоры" value="4" tone="primary" icon={<Camera className="h-4 w-4" />} />
-        <StatCard label="Навигация" value="GPS+IMU" tone="success" icon={<Navigation className="h-4 w-4" />} />
+        <StatCard label="Визуальные сенсоры" value={visS.cam ?? "4"} tone="primary" icon={<Camera className="h-4 w-4" />} />
+        <StatCard label="Навигация" value={navS.gps ? `${navS.gps} · ${navS.sats} спутн.` : "GPS+IMU"} tone="success" icon={<Navigation className="h-4 w-4" />} />
         <StatCard label="Mesh / Radio" value={meshEnabled ? "ON" : "OFF"} tone="warning" icon={<Radio className="h-4 w-4" />} />
-        <StatCard label="Тест систем" value={systemTested ? "OK" : "Не запускался"} tone={systemTested ? "success" : "default"} icon={<Radar className="h-4 w-4" />} />
+        <StatCard label="Качество связи" value={linkQ.wifi != null ? `${linkQ.wifi} dBm` : "—"} tone="default" icon={<Wifi className="h-4 w-4" />} />
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard
+          label="Тест систем"
+          value={systemTested ? "OK" : "Не запускался"}
+          tone={systemTested ? "success" : "default"}
+          icon={<Radar className="h-4 w-4" />}
+        />
+        <StatCard label="Потери пакетов" value={linkQ.loss ?? "—"} tone="default" icon={<Radio className="h-4 w-4" />} />
+        <StatCard label="Температура / давление" value={`${envS.t ?? "—"} · ${envS.p ?? "—"}`} tone="default" icon={<Thermometer className="h-4 w-4" />} />
+        <StatCard label="Камера (API)" value={visS.cam ?? "—"} tone="primary" icon={<Camera className="h-4 w-4" />} />
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
         <Panel title="8.1 Визуальные сенсоры">
-          <SettingRow label="Стандартная камера" value="4K / 30fps" />
+          <SettingRow label="Стандартная камера" value={visS.cam ?? "4K / 30fps"} />
           <SettingRow label="Тепловизор" value={thermalEnabled ? "Включён" : "Выключен"} action={<ToggleButton active={thermalEnabled} onClick={() => setThermalEnabled((v) => !v)} />} />
           <SettingRow label="Depth / LiDAR" value="Калибровка выполнена" />
           <SettingRow label="Автофокус" value="Следящий режим" />
         </Panel>
 
         <Panel title="8.2 Навигация и 8.3 состояние">
-          <SettingRow label="GPS / ГЛОНАСС / Galileo" value="14 спутников · 3D Fix" />
+          <SettingRow label="GPS / ГЛОНАСС / Galileo" value={`${navS.sats ?? "14"} спутников · ${navS.gps ?? "3D Fix"}`} />
           <SettingRow label="IMU" value="Калибровано" />
           <SettingRow label="Батарея" value="Норма · 24.1V" />
-          <SettingRow label="Температура / Давление" value="42°C · 756 мм" action={<Thermometer className="h-4 w-4 text-warning" />} />
+          <SettingRow label="Температура / Давление" value={`${envS.t ?? "42°C"} · ${envS.p ?? "756 мм"}`} action={<Thermometer className="h-4 w-4 text-warning" />} />
         </Panel>
 
         <Panel title="8.4 Связь и mesh-сеть">
-          <SettingRow label="Wi‑Fi uplink" value="Стабильно · -58 dBm" action={<Wifi className="h-4 w-4 text-success" />} />
+          <SettingRow label="Wi‑Fi uplink" value={linkQ.wifi != null ? `Стабильно · ${linkQ.wifi} dBm` : "Стабильно · -58 dBm"} action={<Wifi className="h-4 w-4 text-success" />} />
+          <SettingRow label="Потери пакетов" value={linkQ.loss ?? "—"} />
           <SettingRow label="Mesh сеть" value={meshEnabled ? "Самоорганизация активна" : "Отключена"} action={<ToggleButton active={meshEnabled} onClick={() => setMeshEnabled((v) => !v)} />} />
           <SettingRow label="Радиоканал" value="868 MHz · AES-256" />
           <SettingRow label="Failover" value="Автовосстановление маршрута" />
@@ -174,6 +259,43 @@ function SettingsPage() {
               <Save className="h-3.5 w-3.5" /> Сохранить как профиль
             </button>
             {savedHint && <span className="text-xs text-success">Сохранено</span>}
+          </div>
+        </Panel>
+
+        <Panel title="On-premise: языковые модели Core / Sub" subtitle="Скачивание в data/models через бэкенд (POST /api/v1/models/download). Лимит 512 МБ за запрос." className="xl:col-span-2">
+          <div className="flex flex-col gap-3 text-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="text-muted-foreground">Слот</label>
+              <select
+                value={modelSlot}
+                onChange={(e) => setModelSlot(e.target.value as "core" | "sub")}
+                className="rounded-md border border-border bg-card px-2 py-1.5 text-xs text-foreground"
+              >
+                <option value="core">Core Agent</option>
+                <option value="sub">Sub-Agent</option>
+              </select>
+            </div>
+            <input
+              value={modelUrl}
+              onChange={(e) => setModelUrl(e.target.value)}
+              placeholder="https://…/model.gguf"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs font-mono text-foreground outline-none focus:border-primary"
+            />
+            <button
+              type="button"
+              disabled={modelBusy}
+              onClick={() => void downloadModel()}
+              className="inline-flex max-w-xs items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              {modelBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              Скачать модель
+            </button>
+            {modelHint && (
+              <p className="text-xs text-muted-foreground">
+                <Brain className="mr-1 inline h-3.5 w-3.5 align-text-bottom text-primary" />
+                {modelHint}
+              </p>
+            )}
           </div>
         </Panel>
 

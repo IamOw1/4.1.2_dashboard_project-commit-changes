@@ -3,20 +3,20 @@ REST API для управления дроном
 """
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Dict, List, Any, Optional, AsyncGenerator
 from datetime import datetime
 import asyncio
 import json
 import base64
+import os
 
 from agent.core import DroneIntelligentAgent
-from agent.advanced_learning import AdvancedLearningAgent
-from tools.amorfus import AmorfusTool
-from tools.object_detection import ObjectDetectionTool
+from agent.core_agent import AgentState
 from utils.logger import setup_logger, Logger
 
 logger = setup_logger(__name__)
+event_log = Logger()
 
 # Mock classes for demo
 class MockDroneIntelligentAgent:
@@ -63,14 +63,12 @@ class MockObjectDetectionTool:
     def __init__(self, config):
         pass
 
-# Try to import real classes, fallback to mock
+# Опциональные модули (без них API работает на заглушках)
 try:
-    from agent.core import DroneIntelligentAgent
     from agent.advanced_learning import AdvancedLearningAgent
     from tools.amorfus import AmorfusTool
     from tools.object_detection import ObjectDetectionTool
 except ImportError:
-    DroneIntelligentAgent = MockDroneIntelligentAgent
     AdvancedLearningAgent = MockAdvancedLearningAgent
     AmorfusTool = MockAmorfusTool
     ObjectDetectionTool = MockObjectDetectionTool
@@ -141,6 +139,47 @@ class ExportTelemetryRequest(BaseModel):
     start: Optional[str] = None
     end: Optional[str] = None
 
+
+class DemoModeBody(BaseModel):
+    """Тело запроса переключения демо-режима с дашборда."""
+
+    enabled: bool = True
+
+
+class SimConnectBody(BaseModel):
+    """Подключение к симулятору (Webots, AirSim и др.)."""
+
+    simulator_id: str
+    host: str = "127.0.0.1"
+    port: Optional[int] = None
+
+
+class ModelDownloadRequest(BaseModel):
+    """Загрузка языковой модели по HTTP(S) в каталог data/models (on-premise)."""
+
+    url: str
+    slot: str = "core"
+
+    @field_validator("slot")
+    @classmethod
+    def slot_ok(cls, v: str) -> str:
+        if v not in ("core", "sub"):
+            raise ValueError("slot должен быть core или sub")
+        return v
+
+    @field_validator("url")
+    @classmethod
+    def url_ok(cls, v: str) -> str:
+        from urllib.parse import urlparse
+
+        p = urlparse(v.strip())
+        if p.scheme not in ("http", "https"):
+            raise ValueError("разрешены только схемы http и https")
+        if not p.netloc:
+            raise ValueError("некорректный URL")
+        return v.strip()
+
+
 # Глобальные переменные
 agent: Optional[DroneIntelligentAgent] = None
 learning_agent: Optional[AdvancedLearningAgent] = None
@@ -153,6 +192,15 @@ backups: List[Dict[str, Any]] = []
 mesh_topology: Dict[str, Any] = {"nodes": [], "links": []}
 camera_frame: bytes = b""  # Placeholder for camera frame
 detection_results: List[Dict[str, Any]] = []
+# Настройки дашборда (демо-хранилище в памяти + синхронизация с .env при чтении)
+_runtime_settings: Dict[str, Any] = {}
+# Активное подключение к симулятору (сессия API-процесса)
+_simulator_session: Dict[str, Any] = {
+    "simulator_id": None,
+    "host": None,
+    "port": None,
+    "status": "offline",
+}
 
 app = FastAPI(
     title="COBA AI Drone Agent API",
@@ -277,8 +325,7 @@ async def stop_mission():
     if not agent:
         raise HTTPException(status_code=503, detail="Агент не инициализирован")
 
-    # Установка статуса для остановки миссии
-    agent.state = agent.agent.state.__class__.READY if hasattr(agent, 'state') else None
+    agent.state = AgentState.READY
 
     return {
         "success": True,
@@ -561,8 +608,10 @@ async def get_camera_frame():
         raise HTTPException(status_code=503, detail="Камера не инициализирована")
 
     try:
-        frame = await detection_tool.get_current_frame()
-        return {"frame": frame}
+        raw = await detection_tool.get_current_frame()
+        if isinstance(raw, dict) and "frame" in raw:
+            return raw
+        return {"frame": raw}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -612,7 +661,7 @@ async def get_detection_results():
 async def get_event_log(limit: int = 100):
     """Получение журнала событий"""
     try:
-        logs = await logger.get_recent_logs(limit)
+        logs = await event_log.get_recent_logs(limit)
         return {"logs": logs}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -627,7 +676,7 @@ async def filter_events(
 ):
     """Фильтрация событий"""
     try:
-        filtered = await logger.filter_logs(level, component, drone_id, start, end)
+        filtered = await event_log.filter_logs(level, component, drone_id, start, end)
         return {"logs": filtered}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -636,7 +685,7 @@ async def filter_events(
 async def configure_alerts(request: AlertConfigRequest):
     """Настройка оповещений"""
     try:
-        await logger.configure_alerts(request.dict())
+        await event_log.configure_alerts(request.model_dump(exclude_unset=True))
         return {"status": "configured"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -645,7 +694,7 @@ async def configure_alerts(request: AlertConfigRequest):
 async def delete_event(event_id: str):
     """Удаление события"""
     try:
-        await logger.delete_event(event_id)
+        await event_log.delete_event(event_id)
         return {"status": "deleted"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -654,7 +703,7 @@ async def delete_event(event_id: str):
 async def export_events(format_type: str = "json"):
     """Экспорт событий"""
     try:
-        data = await logger.export_logs(format_type)
+        data = await event_log.export_logs(format_type)
         return {"data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -663,7 +712,7 @@ async def export_events(format_type: str = "json"):
 async def get_event_statistics():
     """Получение статистики событий"""
     try:
-        stats = await logger.get_statistics()
+        stats = await event_log.get_statistics()
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -733,6 +782,240 @@ async def export_models():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/v1/settings")
+async def get_dashboard_settings():
+    """Агрегированные настройки для дашборда (env + сессионные overrides)."""
+    env_keys = (
+        "DEMO_MODE",
+        "SIMULATION_MODE",
+        "SIMULATOR_TYPE",
+        "DRONE_TYPE",
+        "RC_SOURCE",
+        "RC_DEVICE",
+        "LOG_LEVEL",
+        "BACKEND_PORT",
+        "FRONTEND_PORT",
+        "VITE_API_URL",
+    )
+    data = {k: os.getenv(k, "") for k in env_keys}
+    data["overrides"] = dict(_runtime_settings)
+    return data
+
+
+@app.post("/api/v1/settings")
+async def post_dashboard_setting(request: ConfigRequest):
+    """Обновление одной настройки в памяти процесса (демо; для продакшена — .env вручную)."""
+    _runtime_settings[request.key] = request.value
+    return {"ok": True, "key": request.key, "value": request.value}
+
+
+_SIM_DEFAULT_PORTS: Dict[str, int] = {
+    "airsim": 41451,
+    "gazebo": 11345,
+    "pybullet": 6010,
+    "webots": 10001,
+    "jmavsim": 14560,
+    "unity": 7777,
+    "carla": 2000,
+    "isaac": 50051,
+    "simnet": 9000,
+    "skyrover": 8899,
+    "unreal": 8000,
+    "grid": 14540,
+}
+
+
+@app.post("/api/v1/runtime/demo_mode")
+async def set_runtime_demo_mode(body: DemoModeBody):
+    """
+    Переключение демо-режима с дашборда.
+
+    Обновляет переменную окружения процесса API; агент читает ``DEMO_MODE`` при
+    инициализации и в цикле восприятия. Для смены RC/MAVLink после «реального»
+    режима рекомендуется перезапуск ``python main.py api``.
+    """
+    os.environ["DEMO_MODE"] = "true" if body.enabled else "false"
+    _runtime_settings["DEMO_MODE"] = os.environ["DEMO_MODE"]
+    return {
+        "ok": True,
+        "demo_mode": body.enabled,
+        "DEMO_MODE": os.environ["DEMO_MODE"],
+    }
+
+
+@app.get("/api/v1/simulators/status")
+async def simulators_status():
+    """Текущее подключение к симулятору (в т.ч. Webots) и переменные окружения."""
+    return {
+        "session": dict(_simulator_session),
+        "SIMULATOR_TYPE": os.getenv("SIMULATOR_TYPE", _runtime_settings.get("SIMULATOR_TYPE", "")),
+        "SIMULATION_MODE": os.getenv("SIMULATION_MODE", ""),
+    }
+
+
+@app.post("/api/v1/simulators/connect")
+async def simulators_connect(body: SimConnectBody):
+    """Регистрация подключения к симулятору; выставляет ``SIMULATOR_TYPE`` для бэкенда."""
+    global _simulator_session
+    sid = body.simulator_id.strip().lower()
+    port = body.port if body.port is not None else _SIM_DEFAULT_PORTS.get(sid)
+    if port is None:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Неизвестный симулятор «{body.simulator_id}» без явного поля port",
+        )
+    _simulator_session = {
+        "simulator_id": sid,
+        "host": body.host,
+        "port": port,
+        "status": "connected",
+        "since": datetime.now().isoformat(),
+    }
+    os.environ["SIMULATOR_TYPE"] = sid
+    os.environ["SIMULATION_MODE"] = "true"
+    _runtime_settings["SIMULATOR_TYPE"] = sid
+    _runtime_settings["SIMULATION_MODE"] = "true"
+    return {"ok": True, "session": dict(_simulator_session)}
+
+
+@app.post("/api/v1/simulators/disconnect")
+async def simulators_disconnect():
+    """Сброс сессии симулятора (без остановки внешнего процесса Webots/AirSim)."""
+    global _simulator_session
+    _simulator_session = {
+        "simulator_id": None,
+        "host": None,
+        "port": None,
+        "status": "offline",
+    }
+    os.environ["SIMULATION_MODE"] = "false"
+    _runtime_settings["SIMULATION_MODE"] = "false"
+    return {"ok": True, "session": dict(_simulator_session)}
+
+
+@app.post("/api/v1/models/download")
+async def download_llm_model(req: ModelDownloadRequest):
+    """
+    Скачивание файла модели по HTTP(S) в ``data/models/{core|sub}_agent/``.
+
+    Лимит размера 512 МБ за один запрос (защита on-premise). После загрузки
+    выставляет переменную окружения ``CORE_AGENT_MODEL_PATH`` или
+    ``SUB_AGENT_MODEL_PATH`` на сохранённый путь.
+    """
+    from pathlib import Path
+    from urllib.parse import urlparse
+
+    import httpx
+
+    folder = Path("data/models") / f"{req.slot}_agent"
+    folder.mkdir(parents=True, exist_ok=True)
+    path_name = Path(urlparse(req.url).path).name or ("model.gguf" if "gguf" in req.url else "model.bin")
+    dest = folder / path_name[:180]
+    max_bytes = 512 * 1024 * 1024
+    total = 0
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(600.0), follow_redirects=True) as client:
+            async with client.stream("GET", req.url) as resp:
+                resp.raise_for_status()
+                with open(dest, "wb") as out:
+                    async for chunk in resp.aiter_bytes(65536):
+                        total += len(chunk)
+                        if total > max_bytes:
+                            raise HTTPException(
+                                status_code=400,
+                                detail="Превышен лимит 512 МБ; для больших моделей используйте wget/curl локально.",
+                            )
+                        out.write(chunk)
+    except httpx.HTTPError as e:
+        if dest.exists():
+            dest.unlink(missing_ok=True)
+        raise HTTPException(status_code=502, detail=f"Ошибка загрузки: {e}") from e
+
+    rel = str(dest).replace("\\", "/")
+    env_key = "CORE_AGENT_MODEL_PATH" if req.slot == "core" else "SUB_AGENT_MODEL_PATH"
+    os.environ[env_key] = rel
+    _runtime_settings[env_key] = rel
+    return {"ok": True, "path": rel, "bytes": total, "env_key": env_key}
+
+
+@app.post("/api/v1/system/self_test")
+async def system_self_test():
+    """
+    Самопроверка подсистем для кнопки «Запустить тест систем» на странице настроек.
+
+    Не заменяет калибровку железа; проверяет доступность ключевых модулей процесса API.
+    """
+    checks: List[Dict[str, Any]] = []
+    checks.append({"id": "api", "ok": True, "detail": "процесс FastAPI отвечает"})
+    checks.append(
+        {
+            "id": "agent",
+            "ok": agent is not None,
+            "detail": "экземпляр агента создан" if agent else "агент не инициализирован (вызовите POST /api/v1/agent/initialize)",
+        }
+    )
+    checks.append({"id": "learning", "ok": learning_agent is not None, "detail": "модуль обучения загружен"})
+    checks.append({"id": "swarm", "ok": swarm_manager is not None, "detail": "инструмент роя (Amorfus) загружен"})
+    checks.append({"id": "detection", "ok": detection_tool is not None, "detail": "детекция объектов загружена"})
+    demo = os.getenv("DEMO_MODE", "true").lower() in ("1", "true", "yes", "on")
+    checks.append({"id": "demo_mode", "ok": True, "detail": f"DEMO_MODE={'on' if demo else 'off'}"})
+    all_ok = all(bool(c.get("ok")) for c in checks)
+    return {"ok": all_ok, "checks": checks, "timestamp": datetime.now().isoformat()}
+
+
+@app.get("/api/v1/sensors/link-quality")
+async def sensors_link_quality():
+    """Датчики качества связи (демо-данные для дашборда)."""
+    tel = getattr(agent, "telemetry", {}) if agent else {}
+    return {
+        "wifi_dbm": tel.get("signal_strength", -58),
+        "mesh_latency_ms": 12.4,
+        "packet_loss_pct": 0.02,
+        "radio_mhz": 868,
+        "encryption": "AES-256",
+        "failover": "auto",
+    }
+
+
+@app.get("/api/v1/sensors/environment")
+async def sensors_environment():
+    """Сенсоры состояния и окружающей среды."""
+    tel = getattr(agent, "telemetry", {}) if agent else {}
+    return {
+        "temperature_c": tel.get("temperature", 25.0),
+        "pressure_mmhg": 756.0,
+        "humidity_pct": 42.0,
+        "wind_ms": 6.2,
+        "battery_v": tel.get("battery", 24.1) if isinstance(tel.get("battery"), (int, float)) else 24.1,
+    }
+
+
+@app.get("/api/v1/sensors/navigation")
+async def sensors_navigation():
+    """Навигационные сенсоры (GPS/IMU)."""
+    tel = getattr(agent, "telemetry", {}) if agent else {}
+    pos = tel.get("position", {}) if isinstance(tel, dict) else {}
+    att = tel.get("attitude", {}) if isinstance(tel, dict) else {}
+    return {
+        "gps_fix": tel.get("gps_status", "3D_FIX"),
+        "satellites": 14,
+        "imu_calibrated": True,
+        "position": pos,
+        "attitude": att,
+    }
+
+
+@app.get("/api/v1/sensors/visual")
+async def sensors_visual():
+    """Визуальные сенсоры (камера, depth)."""
+    return {
+        "main_camera": "4K/30",
+        "thermal": "enabled",
+        "depth": "stereo",
+        "autofocus": "tracking",
+    }
+
+
 # Вспомогательные функции для бэкапов
 async def create_backup_function(components: List[str]) -> str:
     """Создание бэкапа"""
@@ -771,165 +1054,6 @@ async def export_models_function() -> Dict:
     return {}
 
 
-# Новые эндпоинты для dashboard-warm-heart
-
-@app.get("/api/v1/mesh/topology")
-async def get_mesh_topology():
-    """Получение топологии mesh-сети"""
-    global mesh_topology
-    # В реальности получить из swarm_manager или mesh_network
-    return mesh_topology
-
-@app.get("/api/v1/camera/frame")
-async def get_camera_frame():
-    """Получение кадра с камеры"""
-    global camera_frame
-    if not camera_frame:
-        # Placeholder image
-        camera_frame = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
-    return Response(content=camera_frame, media_type="image/png")
-
-@app.get("/api/v1/camera/stream")
-async def get_camera_stream():
-    """URL для стрима камеры"""
-    return {"stream_url": "http://localhost:8000/api/v1/camera/frame"}  # Placeholder
-
-@app.post("/api/v1/camera/record/start")
-async def start_camera_recording():
-    """Запуск записи видео"""
-    return {"status": "recording_started"}
-
-@app.post("/api/v1/camera/record/stop")
-async def stop_camera_recording():
-    """Остановка записи видео"""
-    return {"status": "recording_stopped"}
-
-@app.get("/api/v1/detection/results")
-async def get_detection_results():
-    """Результаты детекции объектов"""
-    global detection_results
-    return {"detections": detection_results}
-
-@app.get("/api/v1/events/log")
-async def get_events_log(limit: int = 100):
-    """Журнал событий"""
-    global events_log
-    return {"events": events_log[-limit:]}
-
-@app.get("/api/v1/events/filter")
-async def filter_events(request: EventFilterRequest = None):
-    """Фильтрация событий"""
-    global events_log
-    filtered = events_log
-    if request:
-        if request.level:
-            filtered = [e for e in filtered if e.get("level") == request.level]
-        if request.source:
-            filtered = [e for e in filtered if e.get("source") == request.source]
-        # Добавить фильтры по времени
-    return {"events": filtered}
-
-@app.post("/api/v1/events/alert/config")
-async def set_event_alerts(config: EventAlertConfig):
-    """Настройка оповещений о событиях"""
-    return {"status": "configured"}
-
-@app.delete("/api/v1/events/log/{event_id}")
-async def delete_event(event_id: str):
-    """Удаление события"""
-    global events_log
-    events_log = [e for e in events_log if e.get("id") != event_id]
-    return {"status": "deleted"}
-
-@app.get("/api/v1/events/export")
-async def export_events():
-    """Экспорт событий"""
-    global events_log
-    return {"data": events_log}
-
-@app.get("/api/v1/events/statistics")
-async def get_event_statistics():
-    """Статистика событий"""
-    global events_log
-    stats = {"total": len(events_log), "levels": {}}
-    for event in events_log:
-        level = event.get("level", "unknown")
-        stats["levels"][level] = stats["levels"].get(level, 0) + 1
-    return stats
-
-@app.post("/api/v1/backup/create")
-async def create_backup(request: BackupCreateRequest):
-    """Создание бэкапа"""
-    global backups
-    backup_id = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    backup = {
-        "id": backup_id,
-        "created_at": datetime.now().isoformat(),
-        "components": request.components,
-        "size": "1.2MB"  # Placeholder
-    }
-    backups.append(backup)
-    return {"backup_id": backup_id}
-
-@app.get("/api/v1/backup/list")
-async def list_backups():
-    """Список бэкапов"""
-    global backups
-    return {"backups": backups}
-
-@app.post("/api/v1/backup/restore/{backup_id}")
-async def restore_backup(backup_id: str, request: BackupRestoreRequest):
-    """Восстановление бэкапа"""
-    return {"status": "restored"}
-
-@app.delete("/api/v1/backup/{backup_id}")
-async def delete_backup(backup_id: str):
-    """Удаление бэкапа"""
-    global backups
-    backups = [b for b in backups if b["id"] != backup_id]
-    return {"status": "deleted"}
-
-@app.post("/api/v1/export/missions")
-async def export_missions(request: ExportMissionsRequest):
-    """Экспорт миссий"""
-    return {"data": []}  # Placeholder
-
-@app.post("/api/v1/export/telemetry")
-async def export_telemetry(request: ExportTelemetryRequest):
-    """Экспорт телеметрии"""
-    return {"data": []}  # Placeholder
-
-@app.post("/api/v1/export/models")
-async def export_models():
-    """Экспорт моделей обучения"""
-    return {"data": []}  # Placeholder
-
-
-@app.get("/api/v1/memory/short_term")
-async def get_short_term_memory():
-    """Получение краткосрочной памяти агента"""
-    if not agent:
-        raise HTTPException(status_code=503, detail="Агент не инициализирован")
-
-    memory = await agent.get_short_term_memory()
-    return {"memory": memory}
-
-@app.get("/api/v1/sub_agent/ask")
-async def ask_sub_agent(question: str):
-    """Запрос к суб-агенту"""
-    if not agent:
-        raise HTTPException(status_code=503, detail="Агент не инициализирован")
-
-    response = await agent.ask_sub_agent(question)
-    return {"response": response}
-
-@app.get("/api/v1/reports/missions")
-async def get_mission_reports():
-    """Отчёты по миссиям"""
-    # Placeholder
-    return {"reports": []}
-
-
 # WebSocket для real-time данных (опционально)
 @app.websocket("/ws/telemetry")
 async def websocket_telemetry(websocket):
@@ -940,8 +1064,13 @@ async def websocket_telemetry(websocket):
         while True:
             if agent:
                 telemetry = await agent.perceive()
-                await websocket.send_json(telemetry)
-
+            else:
+                telemetry = {
+                    "demo": True,
+                    "timestamp": datetime.now().isoformat(),
+                    "telemetry": {"battery": 87.5, "signal_strength": 82, "mode": "no_agent"},
+                }
+            await websocket.send_json(telemetry)
             await asyncio.sleep(0.1)  # 10 Hz
     except Exception as e:
         logger.error(f"WebSocket ошибка: {e}")

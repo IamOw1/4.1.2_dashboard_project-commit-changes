@@ -65,8 +65,31 @@ def test_learning_progress_without_agent(client):
     assert response.status_code == 503
 
 
-def test_sub_agent_ask_without_agent(client):
-    """Тест вопроса субагенту без инициализации"""
-    response = client.get("/api/v1/sub_agent/ask?question=test")
-    
-    assert response.status_code == 503
+def test_system_self_test(client):
+    """Самопроверка подсистем (настройки дашборда)."""
+    response = client.post("/api/v1/system/self_test", json={})
+    assert response.status_code == 200
+    body = response.json()
+    assert "checks" in body
+    assert isinstance(body["checks"], list)
+
+
+def test_runtime_demo_mode(client):
+    """Переключение DEMO_MODE с дашборда."""
+    response = client.post("/api/v1/runtime/demo_mode", json={"enabled": True})
+    assert response.status_code == 200
+    assert response.json().get("demo_mode") is True
+
+
+def test_simulators_connect_and_status(client):
+    """Регистрация сессии симулятора (без реального Webots)."""
+    r1 = client.post(
+        "/api/v1/simulators/connect",
+        json={"simulator_id": "webots", "host": "127.0.0.1"},
+    )
+    assert r1.status_code == 200
+    r2 = client.get("/api/v1/simulators/status")
+    assert r2.status_code == 200
+    assert r2.json()["session"]["simulator_id"] == "webots"
+    r3 = client.post("/api/v1/simulators/disconnect", json={})
+    assert r3.status_code == 200

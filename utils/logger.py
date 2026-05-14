@@ -39,7 +39,7 @@ def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # Файловый обработчик
-    log_dir = Path("data/logs")
+    log_dir = Path("logs")
     log_dir.mkdir(parents=True, exist_ok=True)
 
     log_file = log_dir / f"{datetime.now().strftime('%Y%m%d')}.log"

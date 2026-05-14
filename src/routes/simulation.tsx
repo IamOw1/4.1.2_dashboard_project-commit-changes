@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Panel, StatCard } from "@/components/dashboard/Panel";
 import { simulators } from "@/lib/sim-catalog";
+import { api } from "@/lib/api-client";
 import { FlaskConical, Plug, PlugZap, CheckCircle2, RefreshCw, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/simulation")({
@@ -46,16 +47,48 @@ function SimulationPage() {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(conns)); } catch { /* ignore */ }
   }, [conns]);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const r = await api.simulatorsStatus();
+      if (cancelled || !r.ok || !r.data || typeof r.data !== "object") return;
+      const sess = (r.data as Record<string, unknown>).session as Record<string, unknown> | undefined;
+      const sid = sess?.simulator_id;
+      const st = sess?.status;
+      if (typeof sid !== "string" || st !== "connected") return;
+      setConns((prev) => {
+        if (!prev[sid]) return prev;
+        return { ...prev, [sid]: { ...prev[sid], status: "online" } };
+      });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const update = (id: string, patch: Partial<SimConnection>) =>
     setConns((p) => ({ ...p, [id]: { ...p[id], ...patch } }));
 
-  const connect = (id: string) => {
+  const connect = async (id: string) => {
+    const c = conns[id];
+    if (!c) return;
     update(id, { status: "connecting" });
-    window.setTimeout(() => {
+    const r = await api.simulatorsConnect({
+      simulator_id: id,
+      host: c.host,
+      port: c.port,
+    });
+    if (r.ok) {
       update(id, { status: "online", lastConnected: new Date().toLocaleTimeString("ru-RU") });
-    }, 900);
+    } else {
+      update(id, { status: "offline" });
+    }
   };
-  const disconnect = (id: string) => update(id, { status: "offline" });
+
+  const disconnect = async (id: string) => {
+    await api.simulatorsDisconnect();
+    update(id, { status: "offline" });
+  };
 
   const onlineCount = Object.values(conns).filter((c) => c.status === "online").length;
 

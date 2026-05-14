@@ -194,3 +194,181 @@
 2026-05-13 23:38:07 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
 2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
 2026-05-13 23:38:07 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:03:25 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:03:25 | tools.mifly          | INFO     | Взлет на высоту 15м со скоростью 5.0м/с
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:03:25 | tools.mifly          | INFO     | Посадка со скоростью 1.0м/с
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:03:25 | tools.mifly          | INFO     | Перемещение в точку (50, 50, 20) со скоростью 5м/с
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:03:25 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Установлено строе: circle
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:03:25 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент test отключен
+2026-05-14 13:03:25 | tools.base_tool      | INFO     | Инструмент test включен
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:04:04 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:04:04 | tools.mifly          | INFO     | Взлет на высоту 15м со скоростью 5.0м/с
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:04:04 | tools.mifly          | INFO     | Посадка со скоростью 1.0м/с
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:04:04 | tools.mifly          | INFO     | Перемещение в точку (50, 50, 20) со скоростью 5м/с
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:04:04 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Установлено строе: circle
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:04:04 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент test отключен
+2026-05-14 13:04:04 | tools.base_tool      | INFO     | Инструмент test включен
+2026-05-14 13:08:00 | __main__             | INFO     | 🔍 Проверка системы...
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/missions готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/reports готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/state готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/memory готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/tiles готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория data/flight_data готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория logs готова
+2026-05-14 13:08:00 | __main__             | INFO     |   ✓ Директория backup готова
+2026-05-14 13:08:01 | __main__             | INFO     |   ✓ PyTorch установлен
+2026-05-14 13:08:02 | __main__             | INFO     |   ✓ OpenCV установлен
+2026-05-14 13:08:02 | __main__             | INFO     |   ✓ NumPy установлен
+2026-05-14 13:08:02 | __main__             | INFO     |   ✓ FastAPI установлен
+2026-05-14 13:08:02 | __main__             | INFO     |   ✓ PyYAML установлен
+2026-05-14 13:08:02 | __main__             | INFO     | ✅ Проверка системы завершена
+2026-05-14 13:25:11 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:11 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:11 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-14 13:25:11 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom инициализирован
+2026-05-14 13:25:13 | tools.slom           | INFO     | Slom готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:25:13 | tools.mifly          | INFO     | Взлет на высоту 15м со скоростью 5.0м/с
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:25:13 | tools.mifly          | INFO     | Посадка со скоростью 1.0м/с
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:25:13 | tools.mifly          | INFO     | Перемещение в точку (50, 50, 20) со скоростью 5м/с
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-14 13:25:13 | tools.mifly          | INFO     | MiFly готов к работе
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Установлено строе: circle
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент amorfus создан
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Amorfus инициализирован. Размер роя: 5
+2026-05-14 13:25:13 | tools.amorfus        | INFO     | Роевой интеллект инициализирован для 5 дронов
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент test создан
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент test отключен
+2026-05-14 13:25:13 | tools.base_tool      | INFO     | Инструмент test включен

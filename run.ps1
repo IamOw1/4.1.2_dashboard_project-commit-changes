@@ -159,26 +159,23 @@ switch ($Mode) {
             Write-ColoredOutput $YELLOW "Could not start Ollama automatically"
         }
 
-        # Start backend
-        $backendJob = Start-Job -ScriptBlock {
+        # main.py all уже поднимает API и Vite-дашборд в дочерних процессах
+        $root = $PSScriptRoot
+        $allJob = Start-Job -ScriptBlock {
+            Set-Location $using:root
             python main.py all
-        }
-
-        # Start frontend
-        $frontendJob = Start-Job -ScriptBlock {
-            npm run dev
         }
 
         Write-ColoredOutput $GREEN "All services started! Press Ctrl+C to stop."
 
         # Wait for jobs
         try {
-            Wait-Job $backendJob, $frontendJob
+            Wait-Job $allJob
         }
         catch {
             Write-ColoredOutput $YELLOW "Stopping services..."
-            Stop-Job $backendJob, $frontendJob -ErrorAction SilentlyContinue
-            Remove-Job $backendJob, $frontendJob -ErrorAction SilentlyContinue
+            Stop-Job $allJob -ErrorAction SilentlyContinue
+            Remove-Job $allJob -ErrorAction SilentlyContinue
         }
     }
 

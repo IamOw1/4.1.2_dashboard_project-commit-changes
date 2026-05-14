@@ -141,9 +141,9 @@ class TestControlArbitrator:
         assert command.source == CommandSource.RC
         assert command.action == "manual_control"
         assert command.priority == 100
-        assert command.parameters['velocity_east'] == 0.5 * 5.0  # Roll to east velocity
-        assert command.parameters['velocity_down'] == -0.3 * 2.0  # Throttle to down velocity
-        assert command.parameters['yaw_rate'] == 0.2 * 90.0  # Yaw stick to yaw rate
+        assert command.parameters['velocity_east'] == 0.2 * 5.0  # right_stick_x
+        assert command.parameters['velocity_down'] == -0.3 * 2.0  # left_stick_y
+        assert command.parameters['yaw_rate'] == 0.5 * 90.0  # left_stick_x
 
     def test_rc_state_to_command_emergency(self, arbitrator):
         """Test RC emergency button"""

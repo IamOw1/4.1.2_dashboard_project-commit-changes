@@ -280,6 +280,35 @@ class ObjectDetectionTool(BaseTool):
             "last_seen": found_objects[-1].timestamp if found_objects else None
         }
     
+    async def get_current_frame(self) -> Dict[str, Any]:
+        """Минимальный кадр для REST `/api/v1/camera/frame` (PNG base64, демо)."""
+        minimal_png = (
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+        )
+        return {"frame": minimal_png, "format": "png_base64"}
+
+    async def start_recording(self) -> None:
+        """Заглушка начала записи с камеры."""
+        self.status = ToolStatus.ACTIVE
+
+    async def stop_recording(self) -> str:
+        """Заглушка остановки записи; возвращает условный путь файла."""
+        return str(self.detections_path / "demo_recording.mp4")
+
+    async def get_latest_detections(self) -> Dict[str, Any]:
+        """Последние детекции для REST `/api/v1/detection/results`."""
+        return {
+            "detections": [
+                {
+                    "class": d.class_name,
+                    "confidence": d.confidence,
+                    "bbox": d.bbox,
+                    "timestamp": d.timestamp,
+                }
+                for d in self.detections[-20:]
+            ]
+        }
+
     async def _save_detections(self, detections: List[DetectedObject]):
         """Сохранение детекций в файл"""
         filename = f"detections_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
