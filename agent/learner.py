@@ -7,6 +7,8 @@ import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
+from enum import Enum
+from dataclasses import dataclass, field
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -15,6 +17,33 @@ from collections import deque
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
+
+
+class LearningMethods(Enum):
+    """Методы обучения агента"""
+    SUPERVISED = "supervised"           # Обучение с учителем
+    REINFORCEMENT = "reinforcement"     # RL с reward-функцией
+    IMITATION = "imitation"             # Копирование экспертных траекторий
+    SELF_PLAY = "self_play"             # Соревнование агентов между собой
+    CURRICULUM = "curriculum"           # Постепенное усложнение задач
+
+
+@dataclass
+class TrainingConfig:
+    """Конфигурация обучения"""
+    method: LearningMethods
+    learning_rate: float = 3e-4
+    batch_size: int = 32
+    epochs: int = 100
+    reward_shaping: Dict = field(default_factory=dict)
+    early_stopping: bool = True
+    patience: int = 10
+    validation_split: float = 0.2
+    algorithm: str = "DQN"  # DQN, PPO, SAC
+    gamma: float = 0.99
+    epsilon_start: float = 1.0
+    epsilon_end: float = 0.01
+    epsilon_decay: float = 0.995
 
 
 class DQNNetwork(nn.Module):

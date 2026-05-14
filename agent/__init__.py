@@ -1,17 +1,25 @@
 """
-COBA AI Drone Agent 2 - Основной модуль агента
+COBA AI Drone Agent v4.1 - Основной модуль агента
+Обновлённая структура с разделением на core_agent и sub_agent
 """
-from .core import DroneIntelligentAgent
+from .core_agent import CoreAgent
 from .memory import ShortTermMemory, LongTermMemory
 from .decision_maker import DecisionMaker
 from .learner import Learner
 from .sub_agent import SubAgent
+from .llm_client import LLMClient, ModelConfig as LLMConfig
+from .roles import AgentRole, TaskPriority, TaskDistributor
 
 __all__ = [
-    'DroneIntelligentAgent',
+    'CoreAgent',
+    'SubAgent',
     'ShortTermMemory',
     'LongTermMemory',
     'DecisionMaker',
     'Learner',
-    'SubAgent'
+    'LLMClient',
+    'LLMConfig',
+    'AgentRole',
+    'TaskPriority',
+    'TaskDistributor',
 ]

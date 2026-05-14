@@ -1,0 +1,103 @@
+# Пресеты конфигураций для обучения агентов
+# Используется в learner.py и advanced_learning.py
+
+presets:
+  # Базовое обучение с учителем
+  supervised_basic:
+    method: supervised
+    learning_rate: 0.001
+    batch_size: 64
+    epochs: 100
+    early_stopping: true
+    patience: 10
+    validation_split: 0.2
+    loss_function: mse
+    
+  # Обучение с подкреплением (DQN)
+  dqn_default:
+    method: reinforcement
+    algorithm: DQN
+    learning_rate: 0.0003
+    batch_size: 32
+    replay_buffer_size: 10000
+    gamma: 0.99
+    epsilon_start: 1.0
+    epsilon_end: 0.01
+    epsilon_decay: 0.995
+    target_update_freq: 1000
+    
+  # PPO для стабильного обучения
+  ppo_stable:
+    method: reinforcement
+    algorithm: PPO
+    learning_rate: 0.0003
+    batch_size: 64
+    clip_epsilon: 0.2
+    value_loss_coef: 0.5
+    entropy_coef: 0.01
+    n_steps: 2048
+    gae_lambda: 0.95
+    gamma: 0.99
+    max_grad_norm: 0.5
+    
+  # Имитационное обучение
+  imitation_expert:
+    method: imitation
+    learning_rate: 0.001
+    batch_size: 32
+    epochs: 50
+    expert_data_ratio: 1.0
+    augmentation: true
+    noise_std: 0.01
+    
+  # Self-play для соревнований
+  selfplay_competitive:
+    method: self_play
+    learning_rate: 0.0003
+    batch_size: 64
+    opponent_sampling: uniform
+    elo_threshold: 100
+    save_checkpoints: true
+    
+  # Curriculum learning
+  curriculum_progressive:
+    method: curriculum
+    stages:
+      - name: basic_flight
+        duration_epochs: 20
+        difficulty: 0.3
+      - name: obstacle_avoidance
+        duration_epochs: 30
+        difficulty: 0.6
+      - name: complex_missions
+        duration_epochs: 50
+        difficulty: 0.9
+    auto_advance: true
+    success_threshold: 0.85
+    
+  # Multi-agent координация
+  multiagent_coordination:
+    method: multi_agent
+    communication_protocol: broadcast
+    coordination_reward: 0.5
+    individual_reward: 0.3
+    team_reward: 0.2
+    max_agents: 5
+    
+  # Transfer learning
+  transfer_finetune:
+    method: transfer
+    source_model: pretrained_base
+    freeze_layers: 3
+    unfreeze_epochs: 10
+    differential_lr: true
+    head_lr_multiplier: 10.0
+
+# Настройки по умолчанию для каждого типа агента
+agent_defaults:
+  core_agent:
+    preset: ppo_stable
+    priority: strategic
+  sub_agent:
+    preset: supervised_basic
+    priority: tactical

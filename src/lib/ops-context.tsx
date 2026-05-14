@@ -36,6 +36,8 @@ interface OpsContextValue {
     bestReward: number;
   };
   unreadEvents: number;
+  demoMode: boolean;
+  toggleDemoMode: (mode: boolean) => void;
   appendEvent: (event: Omit<EventLog, "id" | "timestamp">) => void;
   createBackup: (type?: Backup["type"]) => void;
   restoreBackup: (backup: Backup) => void;
@@ -69,6 +71,16 @@ export function OpsProvider({ children }: { children: ReactNode }) {
     terrain: "Городской квартал",
   });
   const [seenCount, setSeenCount] = useState(initialEvents.length);
+  const [demoMode, setDemoMode] = useState<boolean>(true);
+
+  const toggleDemoMode = (mode: boolean) => {
+    setDemoMode(mode);
+    appendEvent({
+      type: mode ? "info" : "system",
+      message: mode ? "🎮 Переключено в демо-режим" : "🔌 Переключено в реальный режим",
+      source: "Система",
+    });
+  };
 
   const appendEvent = (event: Omit<EventLog, "id" | "timestamp">) => {
     const next: EventLog = {
@@ -172,6 +184,8 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       trainingConfig,
       trainingSummary,
       unreadEvents: Math.max(0, events.length - seenCount),
+      demoMode,
+      toggleDemoMode,
       appendEvent,
       createBackup,
       restoreBackup,
@@ -182,7 +196,7 @@ export function OpsProvider({ children }: { children: ReactNode }) {
       updateTrainingConfig,
       markEventsSeen,
     }),
-    [events, backups, trainingStatus, trainingSeries, trainingConfig, trainingSummary, seenCount],
+    [events, backups, trainingStatus, trainingSeries, trainingConfig, trainingSummary, seenCount, demoMode],
   );
 
   return <OpsContext.Provider value={value}>{children}</OpsContext.Provider>;

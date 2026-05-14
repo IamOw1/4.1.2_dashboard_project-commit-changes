@@ -45,6 +45,74 @@
 - **RC Контроллер**: DJI RC-N1 или совместимый геймпад/джойстик
 - **Симулятор**: Unreal Engine с AirSim (опционально)
 
+## ⚡ Быстрый старт за 5 минут
+
+### 1. Клонирование
+```bash
+git clone https://github.com/IamOw1/4.1.2_dashboard_project.git 
+cd 4.1.2_dashboard_project
+```
+
+### 2. Запуск демо-режима (без дрона)
+```bash
+chmod +x scripts/deploy_unified.sh
+./scripts/deploy_unified.sh
+```
+→ Браузер откроется автоматически на `http://localhost:3000`
+
+### 3. Переключение режимов
+- 🎮 **Демо**: все функции работают на сгенерированных данных
+- 🔌 **Реальный**: подключите дрон по инструкции ниже
+
+## 🤖 Подключение локальной LLM для агентов
+
+### Поддерживаемые форматы файлов:
+
+| Формат | Расширение | Где скачать | Размер (пример) | Рекомендация |
+|--------|-----------|-------------|-----------------|--------------|
+| **GGUF** | `.gguf` | [HuggingFace](https://huggingface.co/models?search=gguf) | 2-8 GB | ✅ Лучший для CPU |
+| **ONNX** | `.onnx` | [ONNX Model Zoo](https://github.com/onnx/models) | 1-4 GB | ✅ Для GPU NVIDIA |
+| **PyTorch** | `.pt`, `.safetensors` | [HuggingFace](https://huggingface.co/models) | 3-10 GB | ⚠️ Требует больше RAM |
+
+### Рекомендуемые модели (7B параметров, баланс качество/скорость):
+
+1. **Llama-3-8B-Instruct.Q4_K_M.gguf** 
+   - Скачать: [HuggingFace](https://huggingface.co/bartowski/Meta-Llama-3-8B-Instruct-GGUF)
+   - Размер: ~4.9 GB
+   - Для: Core Agent (принятие решений)
+
+2. **Qwen2.5-7B-Instruct-Q5_K_S.gguf**
+   - Скачать: [HuggingFace](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF)
+   - Размер: ~5.2 GB
+   - Для: Sub Agent (анализ данных)
+
+3. **Phi-3-mini-4k-instruct.onnx**
+   - Скачать: [HuggingFace](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-onnx)
+   - Размер: ~2.1 GB
+   - Для: лёгких задач / слабые ноутбуки
+
+### Установка:
+
+1. Скачай модель в формате `.gguf` (рекомендуется)
+2. Помести файл в папку:
+   ```
+   backend/data/models/
+   ├── core_agent/
+   │   └── your_model.gguf    # для Core Agent
+   └── sub_agent/
+       └── your_model.gguf    # для Sub Agent
+   ```
+3. В `.env` укажи:
+   ```env
+   CORE_AGENT_MODEL_PATH=data/models/core_agent/your_model.gguf
+   SUB_AGENT_MODEL_PATH=data/models/sub_agent/your_model.gguf
+   AGENT_MODEL_FORMAT=gguf  # gguf | onnx | pytorch
+   AGENT_QUANTIZATION=Q4_K_M  # для GGUF
+   ```
+4. Проверь: `python -m backend.agents.test_llm_client --agent core`
+
+> ⚠️ **Важно:** Для GGUF формата требуется `llama-cpp-python>=0.2.0`. Установите: `pip install llama-cpp-python[cuda]` для GPU-ускорения.
+
 ## 🚀 Local Installation
 
 ### Quick Setup (Linux/macOS)

@@ -1,0 +1,36 @@
+{
+  "agent_id": "drone_agent_001",
+  "state": "initializing",
+  "telemetry": {
+    "position": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "lat": 0.0,
+      "lon": 0.0
+    },
+    "velocity": {
+      "vx": 0,
+      "vy": 0,
+      "vz": 0
+    },
+    "attitude": {
+      "roll": 0,
+      "pitch": 0,
+      "yaw": 0
+    },
+    "battery": 100.0,
+    "signal_strength": 100,
+    "gps_status": "3D_FIX",
+    "temperature": 25.0,
+    "motors": {
+      "m1": 0,
+      "m2": 0,
+      "m3": 0,
+      "m4": 0
+    },
+    "timestamp": "2026-05-13T23:38:07.359859"
+  },
+  "mission_history": [],
+  "timestamp": "2026-05-13T23:38:07.359945"
+}
