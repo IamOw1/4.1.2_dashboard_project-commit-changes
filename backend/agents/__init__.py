@@ -16,7 +16,7 @@ if str(project_root) not in sys.path:
 
 from agent.core_agent import CoreAgent
 from agent.sub_agent import SubAgent
-from agent.llm_client import LLMClient, LLMConfig
+from agent.llm_client import LLMClient, ModelConfig as LLMConfig
 from agent.memory import ShortTermMemory, LongTermMemory
 from agent.decision_maker import DecisionMaker
 from agent.learner import Learner

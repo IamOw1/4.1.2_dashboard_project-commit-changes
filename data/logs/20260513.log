@@ -1,0 +1,238 @@
+2026-05-13 23:34:26 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:34:26 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:34:26 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:34:29 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:34:29 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:34:30 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:34:30 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:34:30 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:34:30 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:34:30 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:34:30 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:34:30 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:34:30 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:34:30 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:34:30 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:34:30 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:34:30 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:34:30 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:34:30 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:34:30 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:34:30 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:34:30 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:34:30 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:36:11 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:36:11 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:36:11 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:36:14 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:36:14 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:36:14 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:36:14 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:36:14 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:36:14 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:36:14 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:36:14 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:36:14 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:36:14 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:36:14 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:36:14 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:36:14 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:36:14 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:36:14 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:36:14 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:36:14 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:36:14 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:36:14 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:37:42 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:37:42 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:37:42 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:37:45 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:37:45 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:37:45 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:37:45 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:37:45 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:37:45 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:37:45 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:37:45 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:37:45 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:37:45 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:37:45 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:37:45 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:03 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:38:03 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:38:03 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:38:06 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:06 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:38:07 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:38:07 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:38:07 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:38:07 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:38:07 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:38:07 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:38:07 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:38:07 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:38:07 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:38:07 - agent.memory - INFO - Краткосрочная память инициализирована (емкость: 1000)
+2026-05-13 23:38:07 - agent.memory - INFO - Долгосрочная память инициализирована (data/memory/knowledge_base.db)
+2026-05-13 23:38:07 - agent.decision_maker - INFO - Движок принятия решений инициализирован
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - OpenAI client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: slom
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mifly
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: geomap
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: precision_landing
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: object_detection
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: mission_planner
+2026-05-13 23:38:07 - agent.core_agent - INFO - Загружен инструмент: autonomous_flight
+2026-05-13 23:38:07 - agent.core_agent - INFO - Агент drone_agent_001 инициализирован. Режим: симуляция
+2026-05-13 23:38:07 - agent.core_agent - INFO - Завершение работы агента...
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Завершение работы субагента...
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент завершил работу
+2026-05-13 23:38:07 - agent.core_agent - INFO - Агент завершил работу.
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.learner - INFO - Модуль обучения инициализирован (device: cpu)
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Завершение работы субагента...
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент завершил работу
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Local LLM client initialized
+2026-05-13 23:38:07 - agent.sub_agent - INFO - Субагент инициализирован
