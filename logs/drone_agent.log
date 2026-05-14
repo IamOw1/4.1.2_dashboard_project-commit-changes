@@ -1,0 +1,196 @@
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:34:30 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:34:30 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:34:30 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:34:30 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:34:30 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:34:30 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:34:30 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:34:30 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:34:30 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:34:30 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:34:30 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:34:30 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:34:30 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:34:30 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:34:30 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:34:30 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:34:30 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:34:30 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:34:30 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:34:30 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:34:30 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:34:30 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:34:30 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:34:30 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:34:30 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:34:30 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:34:30 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:34:30 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:34:30 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:36:14 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:36:14 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:36:14 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:36:14 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:36:14 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:36:14 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:36:14 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:36:14 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:36:14 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:36:14 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:36:14 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:36:14 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:36:14 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:36:14 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:36:14 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:36:14 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:36:14 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:36:14 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:36:14 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:36:14 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:36:14 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:36:14 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:36:14 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:36:14 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:36:14 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:36:14 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:36:14 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:36:14 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:36:14 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:37:45 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:37:45 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:37:45 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:37:45 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:37:45 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:37:45 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:37:45 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:37:45 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:37:45 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:37:45 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:37:45 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:37:45 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:37:45 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:37:45 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:37:45 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:38:07 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:38:07 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:38:07 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:38:07 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:38:07 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:38:07 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:38:07 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:38:07 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:38:07 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:38:07 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:38:07 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:38:07 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:38:07 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:38:07 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:38:07 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:38:07 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:38:07 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:38:07 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:38:07 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:38:07 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:38:07 | tools.autonomous_flight | INFO     | FlyGo инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент slom создан
+2026-05-13 23:38:07 | tools.slom           | INFO     | Slom инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент mifly создан
+2026-05-13 23:38:07 | tools.mifly          | INFO     | MiFly инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент geomap создан
+2026-05-13 23:38:07 | tools.geospatial_mapping | INFO     | GeoMap инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент precisionlanding создан
+2026-05-13 23:38:07 | tools.precision_landing | INFO     | PrecisionLanding инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент objectdetection создан
+2026-05-13 23:38:07 | tools.object_detection | INFO     | ObjectDetection инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент missionplanner создан
+2026-05-13 23:38:07 | tools.mission_planner_tool | INFO     | MissionPlanner инициализирован
+2026-05-13 23:38:07 | tools.base_tool      | INFO     | Инструмент autonomousflight создан
+2026-05-13 23:38:07 | tools.autonomous_flight | INFO     | FlyGo инициализирован

@@ -111,6 +111,46 @@ chmod +x scripts/deploy_unified.sh
    ```
 4. Проверь: `python -m backend.agents.test_llm_client --agent core`
 
+### 🌐 DeepSeek API как резервный вариант
+
+Если локальная модель не найдена, система автоматически переключится на **DeepSeek API**:
+
+**Приоритет подключения:**
+1. ✅ **Локальная модель** (если файл существует и валиден)
+2. ✅ **DeepSeek API** (если настроен API ключ)
+3. ⚠️ **Stub-режим** (если ничего не доступно)
+
+**Настройка DeepSeek API:**
+
+1. Открой `.env` и добавь:
+   ```env
+   DEEPSEEK_API_KEY=sk-your-api-key-here
+   DEEPSEEK_MODEL_NAME=deepseek-chat
+   ```
+
+2. API ключ по умолчанию уже настроен: `sk-27743e75aab840aeb6c14f4dd0e0f4f6`
+
+3. Система автоматически переключится на DeepSeek API при запуске, если:
+   - Локальная модель не найдена по пути из `CORE_AGENT_MODEL_PATH`
+   - Файл модели повреждён или слишком маленький (<10 МБ)
+
+**Пример использования:**
+```python
+from agent.llm_client import LLMClient
+
+# Автоматический выбор: локальная модель → DeepSeek API → stub
+client = LLMClient(agent_type='core')
+
+if client._use_deepseek:
+    print("Используется DeepSeek API")
+else:
+    print("Используется локальная модель")
+
+# Генерация ответа
+response = client.generate("Привет! Как дела?")
+print(response)
+```
+
 > ⚠️ **Важно:** Для GGUF формата требуется `llama-cpp-python>=0.2.0`. Установите: `pip install llama-cpp-python[cuda]` для GPU-ускорения.
 
 ## 🚀 Local Installation
